@@ -38,6 +38,24 @@ python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 ---
 
+## ☁️ Круглосуточный облачный деплой 24/7 (Render / Railway / Koyeb)
+
+В репозитории подготовлены `Dockerfile` и `render.yaml`. Чтобы сайт работал 24/7 без включенного ПК:
+
+### Вариант 1. Render.com (Бесплатно, самый простой способ):
+1. Зайдите на [render.com](https://render.com) и войдите через свой GitHub-аккаунт.
+2. Нажмите **New +** -> **Web Service**.
+3. Выберите репозиторий `Gashtar`.
+4. Render автоматически увидит `Dockerfile` и `render.yaml`.
+5. Нажмите **Deploy Web Service**.
+6. Через 2-3 минуты сервис получит постоянный глобальный HTTPS-адрес: `https://gash-kontrol.onrender.com`.
+
+### Вариант 2. Railway.app:
+1. Зайдите на [railway.app](https://railway.app), нажмите **New Project** -> **Deploy from GitHub repo** -> `Gashtar`.
+2. Сервис развернется автоматически.
+
+---
+
 ## 🧠 Как подключить натренированную модель ИИ
 
 Вся интеграция модели сосредоточена в одном месте — в файле [`backend/detector.py`](backend/detector.py):

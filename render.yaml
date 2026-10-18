@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: gash-kontrol
+    env: docker
+    dockerfilePath: ./Dockerfile
+    region: frankfurt
+    plan: free
+    envVars:
+      - key: FORTE_API_KEY
+        value: forte-datathon-2026-key
