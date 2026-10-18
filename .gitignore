@@ -1,0 +1,25 @@
+# Virtual environment
+venv/
+**/venv/
+Datathon/
+
+# Uploaded test videos and datasets
+**/uploads/
+*.mov
+*.mp4
+*.avi
+
+# Binaries and executables
+cloudflared.exe
+*.exe
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Temporary / scratch
+temp_read.pptx
+.DS_Store
+Thumbs.db

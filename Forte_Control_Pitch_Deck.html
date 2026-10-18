@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GASH.Контроль — Питч-защита проекта | ForteBank Datathon 26</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sand: #EFECE6;
+      --sand-dark: #E2DDD4;
+      --paper: #F7F5F0;
+      --obsidian: #111113;
+      --obsidian-soft: #1B1B1F;
+      --ruby: #991B47;
+      --ruby-bright: #C81E58;
+      --ruby-glow: rgba(200, 30, 88, 0.14);
+      --emerald: #059669;
+      --emerald-soft: rgba(5, 150, 105, 0.12);
+      --amber: #D97706;
+      --ink: #141416;
+      --ink-muted: #5A5A64;
+      --border-light: rgba(20, 20, 22, 0.12);
+      --border-dark: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0A0A0C;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .deck-viewport {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 28px 68px 28px;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1520px;
+      height: 100%;
+      max-height: 855px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      animation: slideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.995); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .theme-light {
+      background: var(--sand);
+      color: var(--ink);
+    }
+
+    .theme-dark {
+      background: var(--obsidian);
+      color: #F5F3EE;
+    }
+
+    .slide-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px 16px 48px;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .theme-dark .slide-top {
+      border-bottom-color: var(--border-dark);
+    }
+
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--ruby-bright);
+      box-shadow: 0 0 12px var(--ruby-bright);
+    }
+
+    .slide-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.65;
+    }
+
+    .slide-body {
+      flex: 1;
+      padding: 34px 48px 36px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ruby-bright);
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(36px, 4vw, 58px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+
+    h2 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(24px, 2.3vw, 34px);
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    h3 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 17px;
+      line-height: 1.3;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 17px;
+      line-height: 1.5;
+      color: var(--ink-muted);
+      max-width: 960px;
+    }
+
+    .theme-dark .subtitle {
+      color: #A8A6B3;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      flex: 1;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      flex: 1;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-dark {
+      background: var(--obsidian-soft);
+      border: 1px solid var(--border-dark);
+      color: #F5F3EE;
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-ruby {
+      background: linear-gradient(135deg, #991B47 0%, #6D1031 100%);
+      color: #FFFFFF;
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .stat-big {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(26px, 2.5vw, 40px);
+      font-weight: 700;
+      color: var(--ruby-bright);
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .card-ruby .stat-big {
+      color: #FFFFFF;
+    }
+
+    .mono-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: rgba(153, 27, 71, 0.1);
+      color: var(--ruby);
+      width: fit-content;
+    }
+
+    .theme-dark .mono-badge, .card-dark .mono-badge {
+      background: rgba(200, 30, 88, 0.2);
+      color: #FF6B9B;
+    }
+
+    .badge-ok {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      width: fit-content;
+    }
+
+    ul.clean-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    ul.clean-list li {
+      position: relative;
+      padding-left: 20px;
+      font-size: 14.5px;
+      line-height: 1.45;
+    }
+
+    ul.clean-list li::before {
+      content: "■";
+      position: absolute;
+      left: 0;
+      top: 1px;
+      color: var(--ruby-bright);
+      font-size: 10px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      background: var(--paper);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      font-size: 14px;
+    }
+
+    .data-table th {
+      background: var(--obsidian);
+      color: #FFFFFF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 13px 18px;
+      text-align: left;
+    }
+
+    .data-table td {
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: middle;
+      line-height: 1.4;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .flow-step {
+      position: relative;
+      background: var(--paper);
+      border: 1px solid var(--border-light);
+      border-top: 4px solid var(--ruby-bright);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .step-num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--ruby-bright);
+      opacity: 0.9;
+    }
+
+    .ui-mockup {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      height: 100%;
+      background: var(--sand);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .ui-sidebar {
+      background: #111113;
+      color: #F5F3EE;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .ui-queue-item {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .ui-canvas {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #EFECE6;
+    }
+
+    .waveform-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 38px;
+      padding: 6px 10px;
+      background: #111113;
+      border-radius: 8px;
+    }
+
+    .waveform-bars span {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.22);
+      border-radius: 2px;
+    }
+
+    .waveform-bars span.peak {
+      background: #C81E58;
+      box-shadow: 0 0 8px #C81E58;
+    }
+
+    .template-slot {
+      background: rgba(200, 30, 88, 0.12);
+      border: 1px dashed var(--ruby-bright);
+      color: var(--ruby);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .theme-dark .template-slot, .card-dark .template-slot {
+      color: #FF85AD;
+      background: rgba(200, 30, 88, 0.22);
+    }
+
+    .deck-controls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 54px;
+      background: rgba(17, 17, 19, 0.94);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+      color: #E5E3DC;
+    }
+
+    .progress-track {
+      position: fixed;
+      bottom: 54px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      z-index: 101;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--ruby-bright);
+      width: 8.33%;
+      transition: width 0.25s ease;
+    }
+
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ctrl-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #FFFFFF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .ctrl-btn:hover {
+      background: var(--ruby-bright);
+      border-color: var(--ruby-bright);
+    }
+
+    .ctrl-btn.active-toggle {
+      background: var(--ruby);
+      border-color: var(--ruby-bright);
+    }
+
+    .notes-drawer {
+      position: fixed;
+      bottom: 66px;
+      right: 28px;
+      width: 540px;
+      max-width: calc(100vw - 56px);
+      background: rgba(17, 17, 19, 0.96);
+      border: 1px solid var(--ruby-bright);
+      border-radius: 14px;
+      padding: 18px 22px;
+      color: #F5F3EE;
+      z-index: 120;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      display: none;
+    }
+
+    .notes-drawer.visible {
+      display: block;
+    }
+
+    .notes-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #FF6B9B;
+      margin-bottom: 8px;
+    }
+
+    .notes-text {
+      font-size: 14px;
+      line-height: 1.55;
+      color: #E2E0D8;
+    }
+
+    .forte-arc {
+      position: absolute;
+      right: -120px;
+      top: -120px;
+      width: 560px;
+      height: 560px;
+      border-radius: 50%;
+      border: 55px solid rgba(200, 30, 88, 0.18);
+      pointer-events: none;
+    }
+
+    .forte-arc-2 {
+      position: absolute;
+      right: 40px;
+      bottom: -180px;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      border: 32px solid rgba(153, 27, 71, 0.14);
+      pointer-events: none;
+    }
+
+    @media print {
+      html, body {
+        overflow: visible;
+        height: auto;
+        background: #FFFFFF;
+      }
+      .deck-viewport {
+        display: block;
+        padding: 0;
+        height: auto;
+      }
+      .slide {
+        display: flex !important;
+        page-break-after: always;
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .deck-controls, .progress-track, .notes-drawer {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-viewport">
+
+    <!-- ==================== SLIDE 1: TITLE ==================== -->
+    <section class="slide theme-dark active" data-timing="0:00 – 0:15 (15 сек)" data-notes="Добрый день, уважаемое жюри! Мы команда GASH.Контроль (Madi Zhassymbek, Amire Kaliya, Zhankerey Askaruly, Damir Ibatullin) и мы представляем автономный AI-сервис для выявления нарушений кассовой дисциплины по видеозаписям внутри закрытого контура банка.">
+      <div class="forte-arc"></div>
+      <div class="forte-arc-2"></div>
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 01 / 12 · FORTEBANK DATATHON 26 · КЕЙС: ВИДЕОКОНТРОЛЬ КАССЫ</div>
+      </div>
+      <div class="slide-body" style="justify-content: center; gap: 28px; position: relative; z-index: 2;">
+        <div>
+          <div class="kicker">● 100% ON-PREMISE · ДВУХМОДЕЛЬНОЕ ЯДРО ИИ · НОРМАТИВНАЯ БАЗА НБРК</div>
+          <h1 style="margin-top: 8px; max-width: 1100px;">GASH.<span style="color: var(--ruby-bright);">Контроль</span></h1>
+          <p class="subtitle" style="font-size: 22px; margin-top: 18px; max-width: 920px; color: #E2DFD7;">
+            Автоматизированный AI-аудит кассовой дисциплины по видеозаписям камер наблюдения: точный таймкод инцидента, стоп-кадры доказательств и привязка к актам НБРК за секунды.
+          </p>
+        </div>
+
+        <div class="grid-3" style="flex: 0; margin-top: 12px;">
+          <div class="card-dark">
+            <span class="mono-badge">СТЕК РЕШЕНИЯ</span>
+            <h3 style="margin-top: 12px;">React 18 + FastAPI + Dual AI</h3>
+            <p style="font-size: 13px; color: #A8A6B3;">Полностью автономная работа на локальном сервере банка + публичный REST API для автопроверки жюри</p>
+          </div>
+          <div class="card-dark">
+            <span class="mono-badge">ЮРИДИЧЕСКАЯ ТОЧНОСТЬ</span>
+            <h3 style="margin-top: 12px;">Постановления НБРК № 231 и № 250</h3>
+            <p style="font-size: 13px; color: #A8A6B3;">Верифицированные ссылки на официальный реестр НПА РК (adilet.zan.kz) без выдуманных статей</p>
+          </div>
+          <div class="card-ruby">
+            <span class="mono-badge" style="background: rgba(255,255,255,0.2); color: #FFF;">КОМАНДА ПРОЕКТА</span>
+            <h3 style="margin-top: 10px;">GASH.Контроль Team</h3>
+            <div style="font-size: 12.5px; line-height: 1.5; opacity: 0.95; margin-top: 4px;">
+              <div><strong>ML / Computer Vision</strong> – Madi Zhassymbek</div>
+              <div><strong>Backend FastAPI</strong> – Amire Kaliya</div>
+              <div><strong>Frontend UI/UX</strong> – Zhankerey Askaruly</div>
+              <div><strong>Data Analyst</strong> – Damir Ibatullin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 2: PROBLEM ==================== -->
+    <section class="slide theme-light" data-timing="0:15 – 0:40 (25 сек)" data-notes="В каждом отделении банка кассовые узлы находятся под прицелом видеокамер. Но отсматривать вручную сотни часов видеоархива физически невозможно. При этом передавать банковское видео во внешние облака вроде GPT или Gemini строго запрещено ИБ, а пропуск незапертого сейфа или выдачи денег без пересчёта несёт прямые операционные риски.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 02 / 12 · ПРОБЛЕМА И БОЛЬ ЗАКАЗЧИКА</div>
+      </div>
+      <div class="slide-body">
+        <div>
+          <div class="kicker">01 // АКТУАЛЬНОСТЬ КЕЙСА</div>
+          <h2>Ручной видеоконтроль кассовых узлов не масштабируется</h2>
+          <p class="subtitle">Служба внутреннего контроля и безопасности сталкивается с тремя критическими барьерами при проверке видеозаписей с касс.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div>
+              <span class="mono-badge">МАСШТАБ АРХИВА</span>
+              <div class="stat-big" style="margin-top: 16px;">8–10 ч/день</div>
+              <h3>Сотни часов видео с каждой кассы</h3>
+            </div>
+            <p style="font-size: 14px; color: var(--ink-muted);">
+              Физически невозможно вручную отсматривать каждую минуту работы всех кассиров филиальной сети. Проверяются лишь случайные выборки.
+            </p>
+          </div>
+
+          <div class="card">
+            <div>
+              <span class="mono-badge">ЧЕЛОВЕЧЕСКИЙ ФАКТОР</span>
+              <div class="stat-big" style="margin-top: 16px;">Риск пропуска</div>
+              <h3>Монотонность снижает внимание</h3>
+            </div>
+            <p style="font-size: 14px; color: var(--ink-muted);">
+              При ускоренном просмотре легко упустить 3-секундный эпизод передачи пачки купюр мимо счётчика или незапертую дверцу сейфа.
+            </p>
+          </div>
+
+          <div class="card-dark">
+            <div>
+              <span class="mono-badge">БАНКОВСКАЯ ТАЙНА (ИБ)</span>
+              <div class="stat-big" style="margin-top: 16px; color: #FF6B9B;">0% Облаков</div>
+              <h3>Запрет на внешние AI-облака</h3>
+            </div>
+            <p style="font-size: 14px; color: #A8A6B3;">
+              Видео из кассового узла нельзя отправлять в OpenAI, Claude или Gemini. Требуется на 100% локальное решение внутри контура банка.
+            </p>
+          </div>
+        </div>
+
+        <div class="card" style="flex: 0; padding: 16px 24px; background: #E6E1D6; flex-direction: row; align-items: center; justify-content: space-between;">
+          <strong style="font-family: 'Unbounded', sans-serif; font-size: 14px;">ИТОГ ДЛЯ БАНКА:</strong>
+          <span style="font-size: 15px;">Нужен 100% локальный AI-навигатор, который сам находит секунду нарушения и подаёт проверяющему готовое досье.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 3: SOLUTION ==================== -->
+    <section class="slide theme-light" data-timing="0:40 – 1:05 (25 сек)" data-notes="Наше решение — GASH.Контроль — сокращает время проверки одного видеоролика с 5–10 минут до 10 секунд. Сервис работает полностью локально, использует двухмодельную систему ИИ, извлекает стоп-кадры доказательств и сразу привязывает их к пункту Постановления НБРК.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 03 / 12 · ЦЕННОСТНОЕ ПРЕДЛОЖЕНИЕ</div>
+      </div>
+      <div class="slide-body">
+        <div>
+          <div class="kicker">02 // НАШЕ РЕШЕНИЕ</div>
+          <h2>GASH.Контроль — ИИ-ассистент кассового ревизора</h2>
+          <p class="subtitle">Готовый веб-сервис и REST API для автоматической инспекции видеозаписей (`.mov`), разворачиваемый на одном локальном сервере.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card-ruby" style="justify-content: center; gap: 18px;">
+            <span class="mono-badge" style="background: rgba(255,255,255,0.2); color: #FFF;">ГЛАВНАЯ ЦЕННОСТЬ ПРОДУКТА</span>
+            <div class="stat-big" style="font-size: 48px;">В 30 раз быстрее</div>
+            <h3>Проверка ролика за 10 секунд вместо 5–10 минут ручного отсмотра</h3>
+            <p style="font-size: 15px; opacity: 0.92; line-height: 1.5;">
+              Сотрудник контроля не тратит время на пустые минуты видео: система сразу перематывает плеер на таймкод инцидента и показывает стоп-кадры с нормой закона.
+            </p>
+          </div>
+
+          <div class="card" style="justify-content: space-around;">
+            <h3>4 столпа GASH.Контроль:</h3>
+            <ul class="clean-list">
+              <li><strong>Двухмодельный ИИ-анализ:</strong> Модель 1 классифицирует объекты в кадре, Модель 2 оценивает общую картину и контекст сцены.</li>
+              <li><strong>Точная временна́я локализация и доказательства:</strong> Выделение таймкода (`timecode_sec`) и 1–3 ключевых кадров (`JPEG base64`).</li>
+              <li><strong>Юридическая верификация РК:</strong> Привязка каждого события к реальным главам Постановлений Правления НБРК № 231 и № 250 (`adilet.zan.kz`).</li>
+              <li><strong>Принцип Human-in-the-Loop (Раздел 7 ТЗ):</strong> Надёжная навигационная подсказка для финального решения специалиста.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 4: USER FLOW ==================== -->
+    <section class="slide theme-light" data-timing="1:05 – 1:30 (25 сек)" data-notes="Путь пользователя состоит из 4 шагов: пакетная загрузка до 10 видеороликов .mov, двухуровневый локальный анализ в пуле потоков, получение вердикта с импульсным спектром таймкодов и переход в 1 клик к нужному кадру и правилу НБРК.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 04 / 12 · КАК ЭТО РАБОТАЕТ (USER FLOW)</div>
+      </div>
+      <div class="slide-body">
+        <div>
+          <div class="kicker">03 // ПОЛЬЗОВАТЕЛЬСКИЙ СЦЕНАРИЙ</div>
+          <h2>От сырого видео `.mov` до готового заключения за 4 шага</h2>
+          <p class="subtitle">Полный цикл работы проверяющего в веб-интерфейсе или через автоматизированный API-скрипт жюри.</p>
+        </div>
+
+        <div class="grid-4" style="flex: 1; align-items: stretch;">
+          <div class="flow-step">
+            <div class="step-num">ШАГ 01</div>
+            <span class="mono-badge">ОЧЕРЕДЬ</span>
+            <h3>Загрузка 1–10 видео `.mov`</h3>
+            <p style="font-size: 14px; color: var(--ink-muted);">
+              Ревизор перетаскивает сразу пачку видео со смены в левый пульт управления или вызывает <code>POST /api/v1/analyze</code>.
+            </p>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-num">ШАГ 02</div>
+            <span class="mono-badge">DUAL AI ENGINE</span>
+            <h3>Двухуровневый анализ</h3>
+            <p style="font-size: 14px; color: var(--ink-muted);">
+              Модель 1 находит и классифицирует объекты (купюры, сумки, сейф, людей), а Модель 2 анализирует общую картину сцены.
+            </p>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-num">ШАГ 03</div>
+            <span class="mono-badge">ВЕРДИКТ</span>
+            <h3>Вердикт + Спектр таймкодов</h3>
+            <p style="font-size: 14px; color: var(--ink-muted);">
+              Выводится официальный статус по ТЗ (<em>«Обнаружены признаки возможных нарушений»</em>) и рубиновые пики на шкале времени.
+            </p>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-num">ШАГ 04</div>
+            <span class="mono-badge">ДОКАЗАТЕЛЬСТВА</span>
+            <h3>Кадр + Норма НБРК</h3>
+            <p style="font-size: 14px; color: var(--ink-muted);">
+              Клик по карточке перематывает видео на секунду инцидента, открывает стоп-кадры в Zoom и статью Постановления НБРК.
+            </p>
+          </div>
+        </div>
+
+        <div class="card-dark" style="flex: 0; padding: 16px 24px; flex-direction: row; align-items: center; justify-content: space-between;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #FF6B9B;">⚡ ПАРАЛЛЕЛЬНАЯ РАБОТА:</span>
+          <span style="font-size: 14px;">Во время анализа остальных роликов в очереди проверяющий уже может переключаться и изучать готовые результаты.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 5: DEMO / UI SCREENSHOTS ==================== -->
+    <section class="slide theme-light" data-timing="1:30 – 2:15 (45 сек)" data-notes="На слайде представлен наш рабочий интерфейс GASH.Контроль. Слева в чёрном блоке — пакетная очередь до 10 видео с прогрессом проверки и быстрым переключением. Справа — адаптивный плеер под вертикальные камеры 464x848, выбор скорости 0.25x–1.5x, импульсный спектр событий и карточки с кадрами-доказательствами.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 05 / 12 · ДЕМОНСТРАЦИЯ ИНТЕРФЕЙСА (HTTP://LOCALHOST:8000)</div>
+      </div>
+      <div class="slide-body">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div class="kicker">04 // ПРОДУКТОВЫЙ ИНТЕРФЕЙС</div>
+            <h2>Рабочий пульт инспектора комплаенса (GASH.Контроль)</h2>
+          </div>
+          <span class="badge-ok">✓ ЖИВОЕ ДЕМО ГОТОВО НА PORT 8000</span>
+        </div>
+
+        <div class="ui-mockup" style="margin-top: 14px;">
+          <div class="ui-sidebar">
+            <div>
+              <div style="font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                <span class="brand-dot"></span> GASH.Контроль
+              </div>
+              <div style="margin-top: 14px; border: 1px dashed rgba(255,255,255,0.25); border-radius: 10px; padding: 12px; text-align: center; font-size: 12px; color: #A8A6B3;">
+                + Пакетная загрузка до 10 видео (.mov)
+              </div>
+
+              <div style="margin-top: 14px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #A8A6B3; text-transform: uppercase;">
+                ОЧЕРЕДЬ ПРОВЕРКИ (3 / 10 ВИДЕО)
+              </div>
+
+              <div class="ui-queue-item" style="border-color: #C81E58; background: rgba(200,30,88,0.16);">
+                <div style="display: flex; justify-content: space-between; font-weight: 700;">
+                  <span>1. X-1.mov</span>
+                  <span style="color: #FF6B9B; font-family: 'JetBrains Mono', monospace;">НАРУШЕНИЕ</span>
+                </div>
+                <div style="font-size: 11px; color: #D4D2C8; margin-top: 4px;">Таймкод: 00:22 · Готово (100%)</div>
+              </div>
+
+              <div class="ui-queue-item">
+                <div style="display: flex; justify-content: space-between; font-weight: 600;">
+                  <span>2. Х-13.mov</span>
+                  <span style="color: #FF6B9B; font-family: 'JetBrains Mono', monospace;">НАРУШЕНИЕ</span>
+                </div>
+                <div style="font-size: 11px; color: #A8A6B3; margin-top: 4px;">Таймкод: 00:47 · Готово (100%)</div>
+              </div>
+
+              <div class="ui-queue-item">
+                <div style="display: flex; justify-content: space-between; font-weight: 600;">
+                  <span>3. Х-5.mov</span>
+                  <span style="color: #34D399; font-family: 'JetBrains Mono', monospace;">НОРМА</span>
+                </div>
+                <div style="font-size: 11px; color: #A8A6B3; margin-top: 4px;">Нарушений: 0 · Готово (100%)</div>
+              </div>
+            </div>
+
+            <div style="font-size: 11px; color: #8E8C99; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+              ▸ Справочник НПА РК (Постановления НБРК № 231, № 250 · adilet.zan.kz)
+            </div>
+          </div>
+
+          <div class="ui-canvas">
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #F7F5F0; padding: 12px 18px; border-radius: 12px; border-left: 5px solid #C81E58;">
+              <div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #C81E58; font-weight: 700;">ВЕРДИКТ СИСТЕМЫ // X-1.MOV</div>
+                <div style="font-family: 'Unbounded', sans-serif; font-size: 16px; font-weight: 700;">Обнаружены признаки возможных нарушений</div>
+              </div>
+              <span class="mono-badge">ЭПИЗОДОВ: 1 · ВРЕМЯ: 00:22</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.1fr 1.3fr; gap: 16px; flex: 1;">
+              <div style="background: #111113; border-radius: 12px; padding: 14px; color: #FFF; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A8A6B3;">
+                  <span>КАМЕРА КАССЫ (464×848)</span>
+                  <span>СКОРОСТЬ: [0.25x] [0.5x] [1x] [1.5x]</span>
+                </div>
+                <div style="text-align: center; padding: 26px 10px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: #19191D;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #FF6B9B;">▶ 00:22 / 00:34</div>
+                  <div style="font-size: 12px; color: #A8A6B3; margin-top: 6px;">Прямой переход по клику на карточку инцидента</div>
+                </div>
+                <div>
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #A8A6B3; margin-bottom: 4px;">ИМПУЛЬСНЫЙ СПЕКТР СОБЫТИЙ (WAVEFORM TIMELINE)</div>
+                  <div class="waveform-bars">
+                    <span style="height:25%"></span><span style="height:30%"></span><span style="height:20%"></span><span style="height:35%"></span><span style="height:28%"></span><span style="height:40%"></span><span style="height:95%" class="peak"></span><span style="height:85%" class="peak"></span><span style="height:30%"></span><span style="height:25%"></span><span style="height:20%"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: #F7F5F0; border-radius: 12px; padding: 16px; border: 1px solid var(--border-light); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="mono-badge">ТАЙМКОД: 00:22 (22 сек)</span>
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted);">КАДРЫ BASE64 + ZOOM (✕)</span>
+                  </div>
+                  <h3 style="margin-top: 10px; font-size: 15px;">Приём/выдача наличных денег без пересчёта на счётчике</h3>
+                  <p style="font-size: 12.5px; color: var(--ink-muted); margin-top: 4px;">
+                    Наблюдаемое действие: прямая передача пачки банкнот между кассиром и клиентом без использования счётной машинки.
+                  </p>
+                </div>
+                <div style="background: #EFECE6; padding: 10px 12px; border-radius: 8px; font-size: 11.5px; border-left: 3px solid var(--ruby);">
+                  <strong>Норма НБРК:</strong> Постановление Правления НБРК № 231 (Гл. 2, Пар. 2 — Порядок приёма и выдачи наличных денег).
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 6: ARCHITECTURE ==================== -->
+    <section class="slide theme-dark" data-timing="2:15 – 2:45 (30 сек)" data-notes="Весь стек работает внутри закрытого контура банка без доступа в интернет. Сервер на FastAPI одновременно раздаёт React-интерфейс с локальными бандлами /vendor и запускает двухмодельное AI-ядро через асинхронный пул потоков.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 06 / 12 · ТЕХНИЧЕСКАЯ АРХИТЕКТУРА (100% ON-PREMISE)</div>
+      </div>
+      <div class="slide-body">
+        <div>
+          <div class="kicker">05 // АРХИТЕКТУРА СИСТЕМЫ</div>
+          <h2>Единый автономный контур: React → FastAPI → 2 AI-модели → Хранилище</h2>
+          <p class="subtitle">Ни одного внешнего сетевого вызова: даже библиотеки интерфейса (`React`, `Tailwind`) упакованы локально в `/vendor`.</p>
+        </div>
+
+        <div class="grid-4" style="flex: 1; align-items: stretch;">
+          <div class="card-dark" style="border-top: 4px solid #38BDF8;">
+            <div>
+              <span class="mono-badge" style="color:#38BDF8; background:rgba(56,189,248,0.15);">СЛОЙ 1 · FRONTEND & CLI</span>
+              <h3 style="margin-top: 12px;">React 18 + Скрипт Жюри</h3>
+              <ul class="clean-list" style="margin-top: 12px; font-size: 13.5px; color: #D4D2C8;">
+                <li>Веб-пульт на <code>GET /</code> (очередь 10 видео, плеер, таймлайн)</li>
+                <li>Автопроверка жюри через <code>curl</code> с заголовком <code>X-API-Key</code></li>
+                <li>Локальная раздача статики <code>/vendor</code> без внешних CDN</li>
+              </ul>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#38BDF8;">PORT 8000 · HTTP/REST</div>
+          </div>
+
+          <div class="card-dark" style="border-top: 4px solid var(--ruby-bright);">
+            <div>
+              <span class="mono-badge">СЛОЙ 2 · BACKEND API</span>
+              <h3 style="margin-top: 12px;">FastAPI + ThreadPool</h3>
+              <ul class="clean-list" style="margin-top: 12px; font-size: 13.5px; color: #D4D2C8;">
+                <li><code>POST /api/v1/analyze</code> — приём <code>.mov</code> и мгновенный возврат <code>job_id</code></li>
+                <li><code>GET /api/v1/jobs/{id}</code> — JSON строго по схеме Раздела 10 ТЗ</li>
+                <li><code>ThreadPoolExecutor</code> для неблокирующей очереди задач</li>
+              </ul>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#FF6B9B;">ASYNC JOB QUEUE</div>
+          </div>
+
+          <div class="card-dark" style="border-top: 4px solid #A855F7;">
+            <div>
+              <span class="mono-badge" style="color:#C084FC; background:rgba(168,85,247,0.18);">СЛОЙ 3 · DUAL AI ENGINE</span>
+              <h3 style="margin-top: 12px;">Двухмодельный пайплайн</h3>
+              <ul class="clean-list" style="margin-top: 12px; font-size: 13.5px; color: #D4D2C8;">
+                <li><strong>Модель 1 (Объекты):</strong> детекция и классификация людей, рук, купюр, сумок и сейфа</li>
+                <li><strong>Модель 2 (Общая картина):</strong> анализ контекста всей сцены и временна́я локализация нарушений</li>
+              </ul>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#C084FC;">MODEL 1 (OBJECTS) + MODEL 2 (SCENE)</div>
+          </div>
+
+          <div class="card-dark" style="border-top: 4px solid var(--emerald);">
+            <div>
+              <span class="badge-ok">СЛОЙ 4 · STORAGE & LAW</span>
+              <h3 style="margin-top: 12px;">Хранилище и База НБРК</h3>
+              <ul class="clean-list" style="margin-top: 12px; font-size: 13.5px; color: #D4D2C8;">
+                <li>Локальный каталог видео <code>uploads/</code> для стриминга в плеер</li>
+                <li>Кодирование стоп-кадров в чистый <code>JPEG base64</code></li>
+                <li>Верифицированный справочник НБРК № 231 и № 250</li>
+              </ul>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#34D399;">100% LOCAL STORAGE</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 7: DUAL AI MODEL (TEMPLATE) ==================== -->
+    <section class="slide theme-light" data-timing="2:45 – 3:25 (40 сек)" data-notes="На слайде 7 представлена ключевая особенность нашего подхода — двухмодельная архитектура ИИ. Первая модель отвечает за микро-уровень: она находит и классифицирует объекты в кадре (купюры, инкассаторские сумки, дверцу сейфа, людей). Вторая модель смотрит на общую картину сцены в динамике и определяет, является ли взаимодействие нарушением регламента НБРК. Такое разделение даёт высокую устойчивость к смене ракурса камеры.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 07 / 12 · ДВУХМОДЕЛЬНАЯ АРХИТЕКТУРА ИИ (ШАБЛОН МЕТРИК)</div>
+      </div>
+      <div class="slide-body">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div class="kicker">06 // ИСКУССТВЕННЫЙ ИНТЕЛЛЕКТ И COMPUTER VISION</div>
+            <h2>Двухступенчатый AI-пайплайн: Объекты + Общая картина сцены</h2>
+          </div>
+          <span class="mono-badge">ШАБЛОН: ВПИШИТЕ ФИНАЛЬНЫЕ ЦИФРЫ ПЕРЕД ЗАЩИТОЙ</span>
+        </div>
+
+        <div class="grid-2">
+          <!-- Left Column: Two Stacked Model Cards -->
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="card" style="flex: 1; border-left: 5px solid var(--ruby-bright);">
+              <div>
+                <span class="mono-badge">МОДЕЛЬ 1 // МИКРО-УРОВЕНЬ (КЛАССИФИКАЦИЯ ОБЪЕКТОВ)</span>
+                <h3 style="margin-top: 8px;">Локальный детектор и классификатор объектов <span class="template-slot">[Архитектура №1]</span></h3>
+                <ul class="clean-list" style="margin-top: 8px;">
+                  <li><strong>Задача:</strong> Находит и классифицирует ключевые объекты в кадре (кассир, клиент, 3-е лицо, пачки купюр, инкассаторская сумка, дверца сейфа, счётчик, посторонние предметы).</li>
+                  <li><strong>Выход Модели 1:</strong> Точные координаты, классы объектов и их состояния на каждом кадре.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card-dark" style="flex: 1; border-left: 5px solid #38BDF8;">
+              <div>
+                <span class="mono-badge" style="color:#38BDF8; background:rgba(56,189,248,0.16);">МОДЕЛЬ 2 // МАКРО-УРОВЕНЬ (АНАЛИЗ ОБЩЕЙ КАРТИНЫ)</span>
+                <h3 style="margin-top: 8px;">Глобальная модель контекста и сценариев <span class="template-slot">[Архитектура №2]</span></h3>
+                <ul class="clean-list" style="margin-top: 8px; color: #D4D2C8;">
+                  <li><strong>Задача:</strong> Смотрит на общую картину происходящего во времени (уход кассира при открытом сейфе, передача денег мимо счётчика, вход постороннего в кассу).</li>
+                  <li><strong>Устойчивость к смене ракурса:</strong> Оценивает семантику всей сцены, отсекая одиночные ложные срабатывания.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Metrics Template -->
+          <div class="card-dark" style="justify-content: space-between;">
+            <div>
+              <span class="mono-badge">МЕТРИКИ АНСАМБЛЯ НА ВАЛИДАЦИИ (42 ВИДЕО .MOV)</span>
+              <h3 style="margin-top: 8px;">Качество двухмодельного ядра и скорость</h3>
+            </div>
+
+            <div class="grid-2" style="margin-top: 8px; gap: 14px; flex: 0;">
+              <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size: 12px; color: #A8A6B3;">Точность вердикта (М1 + М2 F1)</div>
+                <div class="stat-big" style="margin-top: 6px;"><span class="template-slot">[XX.X%]</span></div>
+                <div style="font-size: 11px; color: #34D399;">Приоритет Recall (не пропустить инцидент)</div>
+              </div>
+
+              <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size: 12px; color: #A8A6B3;">Точность таймкода (Модель 2)</div>
+                <div class="stat-big" style="margin-top: 6px;"><span class="template-slot">[±X.X с]</span></div>
+                <div style="font-size: 11px; color: #D4D2C8;">Локализация секунды нарушения</div>
+              </div>
+
+              <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size: 12px; color: #A8A6B3;">Классификация объектов (Модель 1)</div>
+                <div class="stat-big" style="margin-top: 6px;"><span class="template-slot">[XX.X%]</span></div>
+                <div style="font-size: 11px; color: #D4D2C8;">Люди, купюры, сумка, сейф, счётчик</div>
+              </div>
+
+              <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size: 12px; color: #A8A6B3;">Среднее время на 1 видео</div>
+                <div class="stat-big" style="margin-top: 6px;"><span class="template-slot">[~X.X с]</span></div>
+                <div style="font-size: 11px; color: #34D399;">При лимите ТЗ до 300 секунд</div>
+              </div>
+            </div>
+
+            <div style="background: rgba(200,30,88,0.15); border: 1px solid rgba(200,30,88,0.35); border-radius: 10px; padding: 11px 15px; font-size: 12px;">
+              <strong>Почему две модели лучше одной:</strong> Модель 1 даёт строгую фактологию объектов в руках и на столе, а Модель 2 понимает общий контекст кассовой операции.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 8: KZ REGULATIONS MATRIX ==================== -->
+    <section class="slide theme-light" data-timing="3:25 – 3:50 (25 сек)" data-notes="Особое внимание мы уделили критерию 4 — привязке к нормативной базе РК. Мы не генерируем ссылки нейросетью, чтобы исключить галлюцинации. Каждому классу визуального нарушения сопоставлен точный пункт действующих Постановлений Правления НБРК № 231 и № 250 из официальной базы Әділет.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 08 / 12 · ПРИВЯЗКА К НОРМАТИВНОЙ БАЗЕ РК (ADILET.ZAN.KZ)</div>
+      </div>
+      <div class="slide-body">
+        <div>
+          <div class="kicker">07 // ЮРИДИЧЕСКАЯ ДОСТОВЕРНОСТЬ (КРИТЕРИЙ 4 — 15 БАЛЛОВ)</div>
+          <h2>Классификатор нарушений и нормативные акты НБРК</h2>
+          <p class="subtitle">Верифицированный справочник реальных актов Национального Банка РК без нейросетевых галлюцинаций.</p>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 28%;">Визуальный паттерн на видео</th>
+              <th style="width: 28%;">Тип события (<code>type</code>)</th>
+              <th style="width: 44%;">Нормативный акт РК (ИПС «Әділет» — <code>adilet.zan.kz</code>)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Прямая передача купюр между кассиром и клиентом мимо счётчика</td>
+              <td><strong>Приём/выдача наличности без полистного пересчёта</strong></td>
+              <td><strong>Постановление Правления НБРК № 231 от 29.11.2019</strong> (Гл. 2, Пар. 2 — Порядок приёма и выдачи наличных денег)</td>
+            </tr>
+            <tr>
+              <td>Кассир покидает помещение кассы, оставив купюры/сумку или открытый сейф</td>
+              <td><strong>Оставление кассового узла и ценностей без присмотра</strong></td>
+              <td><strong>Постановление Правления НБРК № 231</strong> (Гл. 2, Пар. 1) и <strong>Постановление НБРК № 250 от 24.08.2012</strong></td>
+            </tr>
+            <tr>
+              <td>Вход третьего лица или клиента во внутреннюю зону кассира</td>
+              <td><strong>Допуск постороннего лица в кассовое помещение</strong></td>
+              <td><strong>Постановление Правления НБРК № 250</strong> (Ограничение доступа посторонних лиц в кассовый узел)</td>
+            </tr>
+            <tr>
+              <td>Приём/передача зелёной инкассаторской сумки без проверки пломбы и счёта</td>
+              <td><strong>Нарушение регламента приёма инкассаторской сумки</strong></td>
+              <td><strong>Постановление Правления НБРК № 231</strong> (Гл. 3 — Порядок инкассации банкнот, монет и ценностей)</td>
+            </tr>
+            <tr>
+              <td>Верхняя одежда, кружки с напитками или спрятанные купюры на столе</td>
+              <td><strong>Посторонние предметы / нарушение порядка в кассе</strong></td>
+              <td><strong>Постановление Правления НБРК № 231</strong> (Требования к организации кассовой работы и рабочему месту)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-muted);">
+          <span>✔ В карточке инцидента визуальное описание действия и нормативный источник выводятся раздельно.</span>
+          <span class="badge-ok">ПРОВЕРЕНО ПО ADILET.ZAN.KZ</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 9: MARKET & TARGET AUDIENCE ==================== -->
+    <section class="slide theme-light" data-timing="3:50 – 4:10 (20 сек)" data-notes="Кто целевые пользователи нашего продукта внутри банка? Это департамент кассовых операций, служба внутреннего аудита и комплаенса, а также служба банковской безопасности. Решение может быть тиражировано на все отделения БВУ Казахстана.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 09 / 12 · ЦЕЛЕВАЯ АУДИТОРИЯ И БИЗНЕС-ЭФФЕКТ</div>
+      </div>
+      <div class="slide-body">
+        <div>
+          <div class="kicker">08 // ПРИМЕНЕНИЕ В БАНКОВСКОМ СЕКТОРЕ</div>
+          <h2>Для кого создан продукт и какой эффект он даёт банку</h2>
+          <p class="subtitle">Решение спроектировано для встраивания в процессы контроля филиальной сети ForteBank и банков второго уровня РК.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div>
+              <span class="mono-badge">ПОЛЬЗОВАТЕЛЬ 01</span>
+              <h3 style="margin-top: 14px;">Департамент кассовых операций</h3>
+              <p style="font-size: 14px; color: var(--ink-muted); margin-top: 8px;">
+                Ежедневный пост-контроль кассовых смен во всех филиалах: проверка соблюдения полистного пересчёта и регламента работы с инкассацией.
+              </p>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ruby); font-weight:700;">100% ОХВАТ ВИДЕОАРХИВА</div>
+          </div>
+
+          <div class="card">
+            <div>
+              <span class="mono-badge">ПОЛЬЗОВАТЕЛЬ 02</span>
+              <h3 style="margin-top: 14px;">Внутренний аудит и Комплаенс</h3>
+              <p style="font-size: 14px; color: var(--ink-muted); margin-top: 8px;">
+                Готовая доказательная база (стоп-кадры + таймкод + норма Постановления НБРК) для формирования актов служебных проверок.
+              </p>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ruby); font-weight:700;">ЮРИДИЧЕСКИ ЗНАЧИМОЕ ДОСЬЕ</div>
+          </div>
+
+          <div class="card">
+            <div>
+              <span class="mono-badge">ПОЛЬЗОВАТЕЛЬ 03</span>
+              <h3 style="margin-top: 14px;">Служба безопасности банка</h3>
+              <p style="font-size: 14px; color: var(--ink-muted); margin-top: 8px;">
+                Быстрое расследование критических инцидентов: оставление открытого сейфа, вход посторонних лиц в кассовый узел, вынос ценностей.
+              </p>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ruby); font-weight:700;">ПРЕВЕНТИВНАЯ ЗАЩИТА</div>
+          </div>
+        </div>
+
+        <div class="card-ruby" style="flex: 0; padding: 18px 26px; flex-direction: row; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: 0.85;">МАСШТАБИРУЕМОСТЬ В РК</div>
+            <div style="font-family: 'Unbounded', sans-serif; font-size: 16px; margin-top: 2px;">Единый стандарт НБРК № 231/250 позволяет тиражировать продукт на все БВУ и обменные пункты Казахстана</div>
+          </div>
+          <span class="mono-badge" style="background:#FFF; color:var(--ruby);">B2B FINTECH READY</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 10: COMPETITIVE ADVANTAGES ==================== -->
+    <section class="slide theme-light" data-timing="4:10 – 4:30 (20 сек)" data-notes="Чем GASH.Контроль отличается от базовых прототипов? Во-первых, двухмодельной системой ИИ (объекты + общая картина). Во-вторых, пакетной очередью до 10 видео за сеанс. И в-третьих, адаптацией под реальные вертикальные камеры кассы 464x848 со спектром событий и замедлением 0.25x.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 10 / 12 · КОНКУРЕНТНЫЕ ПРЕИМУЩЕСТВА</div>
+      </div>
+      <div class="slide-body">
+        <div>
+          <div class="kicker">09 // ОТЛИЧИЯ ОТ АНАЛОГОВ</div>
+          <h2>Почему GASH.Контроль выигрывает у стандартных решений</h2>
+        </div>
+
+        <div class="grid-2">
+          <div class="card" style="background: #E8E4DC;">
+            <span class="mono-badge" style="background: rgba(0,0,0,0.08); color: var(--ink-muted);">ОБЫЧНЫЕ ПРОТОТИПЫ И VMS-СИСТЕМЫ</span>
+            <h3 style="margin-top: 12px; color: var(--ink-muted);">Типичные слабые места</h3>
+            <ul class="clean-list" style="margin-top: 14px; color: var(--ink-muted);">
+              <li>Поштучная загрузка: ревизор вынужден ждать окончания каждого файла, прежде чем добавить следующий.</li>
+              <li>Горизонтальный плеер 16:9 обрезает верх и низ вертикального кадра <code>464×848</code> (теряется зона двери или сейфа).</li>
+              <li>Одиночные детекторы реагируют на любое движение без понимания общей картины и правил НБРК.</li>
+              <li>Зависимость от внешних CDN или облачных LLM, которые блокируются в закрытой сети банка.</li>
+            </ul>
+          </div>
+
+          <div class="card-dark" style="border: 2px solid var(--ruby-bright);">
+            <span class="mono-badge">ПРЕИМУЩЕСТВА GASH.Контроль</span>
+            <h3 style="margin-top: 12px; color: #FFFFFF;">Что сделали мы</h3>
+            <ul class="clean-list" style="margin-top: 14px; color: #E5E3DC;">
+              <li><strong>Двухмодельная архитектура ИИ:</strong> Классификатор объектов + Модель оценки общей картины сцены.</li>
+              <li><strong>Пакетная мульти-очередь до 10 видео:</strong> Загрузка сразу всей пачки роликов с живым прогресс-баром и переключением в 1 клик.</li>
+              <li><strong>Нативная поддержка вертикального ракурса (464×848):</strong> Полный обзор кабины кассира + Waveform-спектр и скорость <code>0.25x / 0.5x</code>.</li>
+              <li><strong>100% Offline-архитектура:</strong> Полная автономность вплоть до локальных JS-библиотек в папке <code>/vendor</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 11: LIMITATIONS & ROADMAP ==================== -->
+    <section class="slide theme-light" data-timing="4:30 – 4:50 (20 сек)" data-notes="Мы честно оцениваем текущие ограничения в соответствии с разделом 8 ТЗ: при сильном перекрытии стола спиной кассира мелкие детали в руках могут быть не видны, а системные проводки в АБИС по видео не проверяются. Наш Roadmap на 1–3 месяца включает калибровку зон в 2 клика под любой ракурс и подключение живых RTSP-потоков.">
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 11 / 12 · РЕЗУЛЬТАТЫ, ОГРАНИЧЕНИЯ И ROADMAP</div>
+      </div>
+      <div class="slide-body">
+        <div>
+          <div class="kicker">10 // ЧЕСТНЫЙ АНАЛИЗ (РАЗДЕЛ 8 П. 6 ТЗ) И ПЛАН РАЗВИТИЯ</div>
+          <h2>Текущие ограничения и Roadmap внедрения в ForteBank</h2>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <span class="mono-badge">ЧЕСТНЫЕ ОГРАНИЧЕНИЯ И РИСКИ</span>
+            <h3 style="margin-top: 10px;">Границы применимости текущей версии</h3>
+            <ul class="clean-list" style="margin-top: 12px;">
+              <li><strong>Перекрытие обзора (Occlusion):</strong> Если при нестандартном угле камеры кассир полностью закрывает корпусом стол, точность детекции мелких купюр в руках снижается.</li>
+              <li><strong>Отсутствие связки с АБИС (Раздел 7 ТЗ):</strong> Видеоаналитика фиксирует только визуально наблюдаемые действия и не проверяет сумму проводки в системе.</li>
+              <li><strong>Резкое выключение освещения:</strong> При полном погашении света в кассе детекция опирается на факт выхода кассира до момента выключения.</li>
+            </ul>
+          </div>
+
+          <div class="card-dark">
+            <span class="badge-ok">ROADMAP РАЗВИТИЯ (1–3 МЕСЯЦА)</span>
+            <h3 style="margin-top: 10px;">Путь к промышленному внедрению в банке</h3>
+            <ul class="clean-list" style="margin-top: 12px; color: #E2E0D8;">
+              <li><strong>Этап 1 (Месяц 1) — UI-калибровка ракурса за 30 секунд:</strong> Интерактивная разметка полигонов зон (<code>сейф</code>, <code>счётчик</code>, <code>дверь</code>) прямо в браузере для новых камер.</li>
+              <li><strong>Этап 2 (Месяц 2) — Прямой захват RTSP-потоков NVR:</strong> Переход от загрузки файлов <code>.mov</code> к анализу потокового видео с камер отделений в реальном времени.</li>
+              <li><strong>Этап 3 (Месяц 3) — Кросс-сверка с логами счётчиков и АБИС:</strong> Автоматическое сопоставление таймкода передачи денег с аппаратным сигналом счётной машинки.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 12: THANK YOU / Q&A ==================== -->
+    <section class="slide theme-dark" data-timing="4:50 – 5:00 (10 сек + 2–3 мин Q&A)" data-notes="Спасибо за внимание! Наш сервис GASH.Контроль запущен и готов к живой демонстрации и автоматической проверке по API. Будем рады ответить на ваши вопросы!">
+      <div class="forte-arc"></div>
+      <div class="forte-arc-2"></div>
+      <div class="slide-top">
+        <div class="brand-pill"><span class="brand-dot"></span> GASH.Контроль // AI COMPLIANCE STUDIO</div>
+        <div class="slide-meta">СЛАЙД 12 / 12 · СПАСИБО ЗА ВНИМАНИЕ! ВОПРОСЫ И ЖИВОЕ ДЕМО</div>
+      </div>
+      <div class="slide-body" style="justify-content: center; gap: 28px; position: relative; z-index: 2;">
+        <div>
+          <div class="kicker">● FORTEBANK DATATHON 26 · ФИНАЛЬНАЯ ЗАЩИТА ПРОЕКТА</div>
+          <h1 style="margin-top: 8px;">Спасибо за внимание!<br /><span style="color: var(--ruby-bright);">Готовы к вопросам и живому демо</span></h1>
+          <p class="subtitle" style="font-size: 20px; margin-top: 14px; color: #D4D2C8;">
+            Веб-интерфейс и REST API развёрнуты локально и полностью готовы к проверке на закрытом тестовом датасете жюри.
+          </p>
+        </div>
+
+        <div class="grid-3" style="flex: 0;">
+          <div class="card-dark">
+            <span class="mono-badge">ВЕБ-ИНТЕРФЕЙС И ДЕМО</span>
+            <h3 style="margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; word-break: break-all;">https://cams-preserve-beneficial-rights.trycloudflare.com</h3>
+            <p style="font-size: 13px; color: #34D399; margin-top: 6px;">● Онлайн доступен жюри (Cloudflare Tunnel)</p>
+          </div>
+
+          <div class="card-dark">
+            <span class="mono-badge">ЭНДПОИНТЫ АВТОПРОВЕРКИ</span>
+            <h3 style="margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 15px;">POST /api/v1/analyze<br/>GET /api/v1/jobs/{id}</h3>
+            <p style="font-size: 13px; color: #34D399; margin-top: 6px;">X-API-Key: forte-datathon-2026-key</p>
+          </div>
+
+          <div class="card-ruby">
+            <span class="mono-badge" style="background: rgba(255,255,255,0.2); color: #FFF;">КОМАНДА GASH.Контроль</span>
+            <h3 style="margin-top: 10px;">Madi · Amire · Zhankerey · Damir</h3>
+            <p style="font-size: 13px; opacity: 0.92; margin-top: 6px;">Готовы запустить анализ любого тестового видео <code>.mov</code> прямо сейчас в прямом эфире</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Speaker Notes Floating Drawer -->
+  <div id="notesDrawer" class="notes-drawer">
+    <div class="notes-header">
+      <span>🎙 РЕЧЬ СПИКЕРА (SPEAKER NOTES)</span>
+      <span id="notesTiming">0:00 – 0:15</span>
+    </div>
+    <div id="notesContent" class="notes-text"></div>
+  </div>
+
+  <!-- Progress Bar & Controls -->
+  <div class="progress-track">
+    <div id="progressFill" class="progress-fill"></div>
+  </div>
+
+  <footer class="deck-controls">
+    <div class="btn-group">
+      <button class="ctrl-btn" onclick="prevSlide()" title="Стрелка влево">← Назад</button>
+      <span id="slideCounter" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 0 10px;">01 / 12</span>
+      <button class="ctrl-btn" onclick="nextSlide()" title="Стрелка вправо / Пробел">Вперёд →</button>
+    </div>
+
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A8A6B3; display: flex; align-items: center; gap: 16px;">
+      <span>Клавиши: <strong>← / → / Пробел</strong> — слайды</span>
+      <span><strong>N</strong> — текст спикера</span>
+      <span><strong>F</strong> — полный экран</span>
+    </div>
+
+    <div class="btn-group">
+      <button id="notesBtn" class="ctrl-btn" onclick="toggleNotes()">🎙 Заметки спикера (N)</button>
+      <button class="ctrl-btn" onclick="window.print()">🖨 PDF / Печать</button>
+      <button class="ctrl-btn" onclick="toggleFullscreen()">⛶ Полный экран (F)</button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const counterEl = document.getElementById('slideCounter');
+    const progressFill = document.getElementById('progressFill');
+    const notesDrawer = document.getElementById('notesDrawer');
+    const notesContent = document.getElementById('notesContent');
+    const notesTiming = document.getElementById('notesTiming');
+    const notesBtn = document.getElementById('notesBtn');
+    let currentIndex = 0;
+
+    function updateSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= slides.length) index = slides.length - 1;
+      currentIndex = index;
+
+      slides.forEach((s, i) => {
+        s.classList.toggle('active', i === currentIndex);
+      });
+
+      const num = String(currentIndex + 1).padStart(2, '0');
+      const total = String(slides.length).padStart(2, '0');
+      counterEl.textContent = `${num} / ${total}`;
+      progressFill.style.width = `${((currentIndex + 1) / slides.length) * 100}%`;
+
+      const activeSlide = slides[currentIndex];
+      notesContent.textContent = activeSlide.getAttribute('data-notes') || '';
+      notesTiming.textContent = activeSlide.getAttribute('data-timing') || '';
+    }
+
+    function nextSlide() {
+      updateSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      updateSlide(currentIndex - 1);
+    }
+
+    function toggleNotes() {
+      notesDrawer.classList.toggle('visible');
+      notesBtn.classList.toggle('active-toggle');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'n' || e.key === 'N' || e.key === 'т' || e.key === 'Т') {
+        toggleNotes();
+      } else if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+        toggleFullscreen();
+      }
+    });
+
+    updateSlide(0);
+  </script>
+</body>
+</html>

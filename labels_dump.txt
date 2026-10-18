@@ -1,0 +1,87 @@
+наименование файла | таймстемп | нарушение / без нарушения
+X-1 | 22 секунда | нарушение
+X-2 | 10 секунда | нарушение
+Х-3 |  | без нарушения
+Х-4 | 57 секунда | нарушение
+Х-5 |  | без нарушения
+Х-8 |  | без нарушения
+Х-10 |  | без нарушения
+Х-11 | 18 секунда | нарушение
+Х-12 |  | без нарушения
+Х-13 | 47 секунда | нарушение
+Х-14 |  | без нарушения
+Х-15 | 15 секунда | нарушение
+Х-16 |  | без нарушения
+Х-17 | 7 секунда | нарушение
+Х-18 | 20 секунда | нарушение
+Х-19 |  | без нарушения
+Х-20 | 5 секунда | нарушение
+Х-21 |  | без нарушения
+Х-22 | 14 секунда | нарушение
+Х-23 |  | без нарушения
+Х-24 | 8 секунда | нарушение
+Х-25 |  | без нарушения
+Х-26 | 9 секунда | нарушение
+Х-27 |  | без нарушения
+Х-28 | 7 секунда | нарушение
+Х-29 |  | без нарушения
+Х-30 | 13 секунда | нарушение
+Х-31 |  | без нарушения
+Х-32 | 5 секунда | нарушение
+Х-33 | 6 секунда | нарушение
+Х-34 | 13 секунда | нарушение
+Х-35 |  | без нарушения
+Х-37 |  | без нарушения
+Х-38 | 33 секунда | нарушение
+Х-39 |  | без нарушения
+Х-40 | 17 секунда | нарушение
+Х-43 |  | без нарушения
+Х-44 | 16 секунда | нарушение
+Х-45 |  | без нарушения
+Х-46 | 11 секунда | нарушение
+Х-47 | 1минута 8 секунда | нарушение
+Х-48 |  | без нарушения
+
+--- VIDEOS INFO ---
+X-1.mov | duration=25.93s | fps=29.9 | frames=776 | res=464x848
+X-2.mov | duration=17.07s | fps=29.9 | frames=510 | res=464x848
+Х-10.mov | duration=15.57s | fps=30.0 | frames=467 | res=464x848
+Х-11.mov | duration=25.6s | fps=29.9 | frames=765 | res=464x848
+Х-12.mov | duration=42.3s | fps=30.0 | frames=1267 | res=464x848
+Х-13.mov | duration=65.3s | fps=30.0 | frames=1956 | res=464x848
+Х-14.mov | duration=142.53s | fps=30.0 | frames=4273 | res=464x848
+Х-15.mov | duration=20.87s | fps=29.9 | frames=624 | res=464x848
+Х-16.mov | duration=22.73s | fps=29.9 | frames=680 | res=464x848
+Х-17.mov | duration=14.73s | fps=30.0 | frames=442 | res=464x848
+Х-18.mov | duration=22.6s | fps=29.9 | frames=676 | res=464x848
+Х-19.mov | duration=57.43s | fps=29.9 | frames=1720 | res=464x848
+Х-20.mov | duration=11.63s | fps=30.0 | frames=349 | res=464x848
+Х-21.mov | duration=19.6s | fps=29.8 | frames=585 | res=464x848
+Х-22.mov | duration=21.03s | fps=29.9 | frames=628 | res=464x848
+Х-23.mov | duration=18.27s | fps=29.8 | frames=545 | res=464x848
+Х-24.mov | duration=14.7s | fps=30.0 | frames=441 | res=464x848
+Х-25.mov | duration=31.7s | fps=30.0 | frames=950 | res=464x848
+Х-26.mov | duration=19.8s | fps=29.9 | frames=592 | res=464x848
+Х-27.mov | duration=26.43s | fps=29.9 | frames=791 | res=464x848
+Х-28.mov | duration=16.53s | fps=29.8 | frames=492 | res=464x848
+Х-29.mov | duration=17.3s | fps=29.8 | frames=515 | res=464x848
+Х-3.mov | duration=20.03s | fps=29.9 | frames=599 | res=464x848
+Х-30.mov | duration=18.8s | fps=29.9 | frames=562 | res=464x848
+Х-31.mov | duration=23.8s | fps=29.9 | frames=711 | res=464x848
+Х-32.mov | duration=21.3s | fps=29.9 | frames=637 | res=464x848
+Х-33.mov | duration=14.33s | fps=30.0 | frames=430 | res=464x848
+Х-34.mov | duration=17.73s | fps=29.9 | frames=530 | res=464x848
+Х-35.mov | duration=56.77s | fps=29.9 | frames=1700 | res=464x848
+Х-37.mov | duration=15.87s | fps=29.8 | frames=473 | res=464x848
+Х-38.mov | duration=58.97s | fps=30.0 | frames=1767 | res=464x848
+Х-39.mov | duration=78.73s | fps=30.0 | frames=2359 | res=464x848
+Х-4.mov | duration=72.7s | fps=29.9 | frames=2177 | res=464x848
+Х-40.mov | duration=25.27s | fps=29.9 | frames=755 | res=464x848
+Х-43.mov | duration=23.37s | fps=29.9 | frames=699 | res=464x848
+Х-44.mov | duration=20.43s | fps=30.0 | frames=612 | res=464x848
+Х-45.mov | duration=33.33s | fps=29.9 | frames=996 | res=464x848
+Х-46.mov | duration=19.13s | fps=29.9 | frames=572 | res=464x848
+Х-47.mov | duration=72.7s | fps=29.9 | frames=2177 | res=464x848
+Х-48.mov | duration=71.6s | fps=30.0 | frames=2145 | res=464x848
+Х-5.mov | duration=71.6s | fps=30.0 | frames=2145 | res=464x848
+Х-8.mov | duration=38.03s | fps=30.0 | frames=1140 | res=464x848
