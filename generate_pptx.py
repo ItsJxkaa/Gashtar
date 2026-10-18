@@ -598,8 +598,7 @@ add_card(s12, 0.6, 4.6, 3.85, 2.35, "ВЕБ-ИНТЕРФЕЙС И ДЕМО", "ht
 ], mode="dark")
 
 add_card(s12, 4.74, 4.6, 3.85, 2.35, "ЭНДПОИНТЫ АВТОПРОВЕРКИ", "POST /api/v1/analyze\nGET /api/v1/jobs/{id}", [
-    "Заголовок авторизации жюри:\nX-API-Key: forte-datathon-2026-key",
-    "Документация Swagger UI: /docs"
+    "Заголовок авторизации жюри:\nX-API-Key: forte-datathon-2026-key"
 ], mode="dark")
 
 add_card(s12, 8.88, 4.6, 3.85, 2.35, "КОМАНДА GASH.Контроль", "Madi · Amire · Zhankerey · Damir", [
