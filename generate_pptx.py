@@ -610,7 +610,6 @@ add_notes(s12, "[4:50 - 5:00] Спасибо за внимание! Наш се�
 
 out_files = [
     r"c:\Users\ASUS\OneDrive\Desktop\Datathon\GASH_Control_Pitch_Deck.pptx",
-    r"c:\Users\ASUS\OneDrive\Desktop\Datathon\Forte_Control_Pitch_Deck.pptx",
 ]
 for fpath in out_files:
     try:
