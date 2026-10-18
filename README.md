@@ -5,6 +5,13 @@
 
 ---
 
+## 📊 Презентация проекта (12 слайдов)
+- 🖥️ **PowerPoint-презентация (.pptx):** [`GASH_Control_Pitch_Deck.pptx`](GASH_Control_Pitch_Deck.pptx)
+- 🌐 **Интерактивная веб-презентация (HTML):** [`GASH_Control_Pitch_Deck.html`](GASH_Control_Pitch_Deck.html)
+- 📄 **Текст слайдов и спикер-ноуты (Markdown):** [`GASH_Control_Pitch_Deck.md`](GASH_Control_Pitch_Deck.md)
+
+---
+
 ## 🚀 Быстрый запуск
 
 ### 1. Требования

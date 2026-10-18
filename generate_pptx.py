@@ -593,13 +593,13 @@ p3.font.size = Pt(15)
 p3.font.color.rgb = C_LIGHT_MUTED
 p3.space_before = Pt(10)
 
-add_card(s12, 0.6, 4.6, 3.85, 2.35, "ВЕБ-ИНТЕРФЕЙС И ДЕМО", "https://cams-preserve-beneficial-rights.trycloudflare.com", [
-    "Публичный защищенный HTTPS-доступ через Cloudflare Tunnel.",
-    "Локальный адрес: http://localhost:8000"
+add_card(s12, 0.6, 4.6, 3.85, 2.35, "ВЕБ-ИНТЕРФЕЙС И ДЕМО", "http://localhost:8000", [
+    "Публичный туннель для жюри подключается одной командой без перезапуска сервера."
 ], mode="dark")
 
 add_card(s12, 4.74, 4.6, 3.85, 2.35, "ЭНДПОИНТЫ АВТОПРОВЕРКИ", "POST /api/v1/analyze\nGET /api/v1/jobs/{id}", [
-    "Заголовок авторизации жюри:\nX-API-Key: forte-datathon-2026-key"
+    "Заголовок авторизации жюри:\nX-API-Key: forte-datathon-2026-key",
+    "Документация Swagger UI: /docs"
 ], mode="dark")
 
 add_card(s12, 8.88, 4.6, 3.85, 2.35, "КОМАНДА GASH.Контроль", "Madi · Amire · Zhankerey · Damir", [
