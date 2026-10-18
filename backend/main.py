@@ -1,158 +1,110 @@
-"""
-ForteBank Datathon 26 — AI-сервис для выявления нарушений кассовой дисциплины по видеозаписям.
-
-Реализует строго обязательные требования Раздела 4, 5 и 10 ТЗ:
-- POST /api/v1/analyze (загрузка .mov в поле file, заголовок X-API-Key -> возвращает job_id)
-- GET  /api/v1/jobs/{job_id} (статус processing | done | failed и JSON результат по схеме Раздела 10)
-- GET  /api/v1/video/{job_id} (раздача видеофайла для HTML5 плеера, с авто-перепаковкой .mov -> .mp4 при необходимости)
-- GET  / (веб-интерфейс проверяющего)
-"""
-
+"""Gashtar UI/API gateway to the frozen CashGuard GPU analysis service."""
+import hmac
 import os
-import uuid
-import subprocess
+import re
+from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Dict, Any, Optional
 
-from fastapi import FastAPI, UploadFile, File, Header, HTTPException, BackgroundTasks
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+import httpx
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
-from detector import analyze_cashier_video
-
-BASE_DIR = Path(__file__).resolve().parent
-UPLOADS_DIR = BASE_DIR / "uploads"
-FRONTEND_DIR = BASE_DIR.parent / "frontend"
-UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
-
-# API-ключ для проверки жюри (Раздел 10 ТЗ)
-API_KEY = os.getenv("FORTE_API_KEY", "forte-datathon-2026-key")
-
-app = FastAPI(
-    title="GASH.Контроль — Cash Compliance AI Service",
-    version="1.0.0",
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-from concurrent.futures import ThreadPoolExecutor
-
-JOBS: Dict[str, Dict[str, Any]] = {}
-JOB_FILES: Dict[str, Path] = {}
-EXECUTOR = ThreadPoolExecutor(max_workers=2)
+FRONTEND_DIR = Path(__file__).resolve().parents[1] / 'frontend'
 
 
-def verify_api_key(x_api_key: Optional[str]) -> None:
-    """Отклоняет запросы без верного заголовка X-API-Key (Раздел 10 ТЗ)."""
-    if not x_api_key or x_api_key != API_KEY:
-        raise HTTPException(status_code=401, detail="Invalid or missing X-API-Key")
+def create_app(api_key=None, upstream=None, transport=None):
+    api_key = api_key if api_key is not None else os.getenv('CASHGUARD_API_KEY', '')
+    upstream = upstream or os.getenv('CASHGUARD_ANALYZER_URL', 'http://127.0.0.1:8000')
+    client = httpx.AsyncClient(base_url=upstream, transport=transport,
+                              timeout=httpx.Timeout(90, connect=5), trust_env=False)
+
+    @asynccontextmanager
+    async def lifespan(app):
+        yield
+        await client.aclose()
+
+    app = FastAPI(title='GASH.Контроль', version='2026-10-18.28', lifespan=lifespan,
+                  docs_url=None, redoc_url=None, openapi_url=None)
+
+    def authenticate(request):
+        if not api_key:
+            raise HTTPException(503, 'Configure CASHGUARD_API_KEY before using the API')
+        supplied = request.headers.get('X-API-Key', '')
+        if not hmac.compare_digest(supplied.encode(), api_key.encode()):
+            raise HTTPException(401, 'Invalid or missing X-API-Key')
+
+    @app.middleware('http')
+    async def response_headers(request, call_next):
+        response = await call_next(request)
+        response.headers.update({'Cache-Control': 'no-store',
+                                 'X-Content-Type-Options': 'nosniff',
+                                 'Referrer-Policy': 'no-referrer'})
+        if request.url.path == '/':
+            response.headers['Content-Security-Policy'] = (
+                "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+                "img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; "
+                "font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
+        return response
+
+    async def proxy(request, path, upload=False):
+        authenticate(request)
+        headers = {'X-API-Key': api_key}
+        if upload:
+            content_type = request.headers.get('content-type', '')
+            if not content_type.lower().startswith('multipart/form-data;'):
+                raise HTTPException(415, 'Send a multipart file upload')
+            headers['Content-Type'] = content_type
+            size = request.headers.get('content-length')
+            if size:
+                try:
+                    if int(size) > 150 * 1024 * 1024 + 65536:
+                        raise HTTPException(413, 'Upload exceeds 150 MB')
+                except ValueError:
+                    raise HTTPException(400, 'Invalid Content-Length')
+                headers['Content-Length'] = size
+        try:
+            response = await client.request('POST' if upload else 'GET', path,
+                headers=headers, content=request.stream() if upload else None)
+        except httpx.HTTPError:
+            raise HTTPException(503, 'Analysis service is unavailable; no verdict was produced')
+        forwarded = {'Retry-After': response.headers['retry-after']} if 'retry-after' in response.headers else {}
+        return Response(response.content, status_code=response.status_code,
+                        media_type='application/json', headers=forwarded)
+
+    @app.get('/health')
+    async def health():
+        try:
+            response = await client.get('/health', timeout=5)
+            response.raise_for_status()
+            data = response.json()
+        except (httpx.HTTPError, ValueError):
+            return JSONResponse({'service': 'unavailable', 'model_ready': False}, status_code=503)
+        return {**data, 'frontend': 'Gashtar', 'configured': bool(api_key) and data.get('configured', False)}
+
+    @app.post('/api/v1/analyze')
+    async def analyze(request: Request):
+        return await proxy(request, '/api/v1/analyze', upload=True)
+
+    @app.get('/api/v1/jobs/{job_id}')
+    async def job(job_id: str, request: Request):
+        authenticate(request)
+        if not re.fullmatch(r'[a-f0-9]{32}', job_id):
+            raise HTTPException(404, 'Job not found')
+        return await proxy(request, '/api/v1/jobs/' + job_id)
+
+    @app.get('/api/v1/rules')
+    async def rules(request: Request):
+        return await proxy(request, '/api/v1/rules')
+
+    @app.get('/')
+    def index():
+        return FileResponse(FRONTEND_DIR / 'index.html')
+
+    # Playback uses the user's local File object, never a public upload URL.
+    app.mount('/vendor', StaticFiles(directory=FRONTEND_DIR / 'vendor'), name='vendor')
+    app.mount('/assets', StaticFiles(directory=FRONTEND_DIR / 'assets'), name='assets')
+    return app
 
 
-def _run_analysis_sync(job_id: str, video_path: Path) -> None:
-    """Синхронный воркер в пуле потоков для анализа видеозаписи."""
-    try:
-        result = analyze_cashier_video(str(video_path))
-        # Строго схема из Раздела 10 ТЗ
-        JOBS[job_id] = {
-            "job_id": job_id,
-            "status": "done",
-            "verdict": result["verdict"],
-            "violations": result["violations"],
-        }
-    except Exception as exc:
-        JOBS[job_id] = {
-            "job_id": job_id,
-            "status": "failed",
-            "verdict": "no_violation",
-            "violations": [],
-            "error": str(exc),
-        }
-
-
-def _process_video_task(job_id: str, video_path: Path) -> None:
-    """Отправляет задачу в пул потоков, чтобы не блокировать event loop при пакетной загрузке 10 видео."""
-    EXECUTOR.submit(_run_analysis_sync, job_id, video_path)
-
-
-@app.post("/api/v1/analyze")
-async def analyze_video(
-    background_tasks: BackgroundTasks,
-    file: UploadFile = File(...),
-    x_api_key: Optional[str] = Header(default=None, alias="X-API-Key"),
-):
-    """
-    Раздел 10 ТЗ:
-    POST /api/v1/analyze — Загрузить видео в формате .mov (поле file). В ответ возвращается job_id.
-    """
-    verify_api_key(x_api_key)
-
-    job_id = uuid.uuid4().hex[:8]
-    safe_name = os.path.basename(file.filename or "video.mov")
-    saved_path = UPLOADS_DIR / f"{job_id}_{safe_name}"
-
-    with open(saved_path, "wb") as buffer:
-        while chunk := await file.read(1024 * 1024):
-            buffer.write(chunk)
-
-    JOBS[job_id] = {
-        "job_id": job_id,
-        "status": "processing",
-    }
-    JOB_FILES[job_id] = saved_path
-
-    background_tasks.add_task(_process_video_task, job_id, saved_path)
-    return {"job_id": job_id, "status": "processing"}
-
-
-@app.get("/api/v1/jobs/{job_id}")
-async def get_job_status(
-    job_id: str,
-    x_api_key: Optional[str] = Header(default=None, alias="X-API-Key"),
-):
-    """
-    Раздел 10 ТЗ:
-    GET /api/v1/jobs/{job_id} — Получить статус обработки (processing, done, failed) и результат.
-    """
-    verify_api_key(x_api_key)
-
-    if job_id not in JOBS:
-        raise HTTPException(status_code=404, detail="Job not found")
-
-    return JSONResponse(content=JOBS[job_id])
-
-
-@app.get("/api/v1/video/{job_id}")
-async def stream_video(job_id: str):
-    """Отдает загруженный видеофайл для воспроизведения в веб-интерфейсе."""
-    video_path = JOB_FILES.get(job_id)
-    if not video_path or not video_path.exists():
-        raise HTTPException(status_code=404, detail="Video not found")
-    return FileResponse(path=str(video_path), media_type="video/mp4", filename=video_path.name)
-
-
-if (FRONTEND_DIR / "assets").exists():
-    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIR / "assets")), name="assets")
-
-if (FRONTEND_DIR / "vendor").exists():
-    app.mount("/vendor", StaticFiles(directory=str(FRONTEND_DIR / "vendor")), name="vendor")
-
-
-@app.get("/")
-async def serve_ui():
-    index_file = FRONTEND_DIR / "index.html"
-    if index_file.exists():
-        return FileResponse(str(index_file))
-    return JSONResponse({"status": "ok"})
-
-
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
+app = create_app()

@@ -1,0 +1,161 @@
+{
+  "version": "2026-10-18.26",
+  "source": {
+    "document": "Правила осуществления кассовых операций и операций по инкассации банкнот, монет и ценностей; постановление Правления НБРК от 29.11.2019 № 231",
+    "url": "https://adilet.zan.kz/rus/docs/V1900019680",
+    "verified_on": "2026-10-17",
+    "method": "Read the rendered official Adilet document, including amendments and exceptions."
+  },
+  "rules": [
+    {
+      "id": "cash_before_visible_id_check",
+      "type": "Передача наличных до наблюдаемой проверки документа",
+      "section": "п. 7; п. 19 подп. 1; п. 31 подп. 1",
+      "absence": true,
+      "summary": "Надлежащая проверка предшествует кассовой операции. Кассир идентифицирует клиента по документу либо данным сервиса цифровых документов; бумажный документ не является единственным допустимым способом.",
+      "visual_test": "The same customer's complete visible transaction shows cash accepted or issued BEFORE the first visible presentation and examination of an identity document. Establish both actions and their chronological order, from the customer's arrival through completion. Reject if earlier physical or digital checking is visible or plausible due to missing context, an obscured workstation, prior service, or client ambiguity. Missing a paper ID alone is NEVER enough. Describe only the observed order of cash transfer and document handling; do not claim the person was not identified, do not compare faces, and do not treat holding a card as proof of an identity check."
+    },
+    {
+      "id": "camera_capable_personal_device",
+      "type": "Личное устройство с фото- или видеофиксацией в кассовом узле",
+      "section": "п. 12, абзац 2",
+      "absence": false,
+      "summary": "Исключение для вносимых работником средств связи относится к устройствам без функции фото- и видеофиксации.",
+      "visual_test": "A cashier's personal recording-capable device is visibly brought into or kept in the cashier workspace, with direct evidence of its camera lens/module or a visible camera/recording interface. Distinguish a customer device outside the cash area and installed bank equipment. Phone use, a dark rectangle, a wrist movement, or a generic screen alone does not establish a recording-capable personal device. Do not assert that any recording took place unless that action is visible."
+    },
+    {
+      "id": "personal_items",
+      "type": "Личные вещи в кассовом узле",
+      "section": "п. 12",
+      "absence": false,
+      "summary": "Личные вещи, деньги и ценности работников хранятся вне кассового узла. Есть исключения для лекарств, медицинских изделий и средств связи без фото- и видеофиксации.",
+      "visual_test": "An unmistakably personal bag, wallet, removed outerwear, or a personal food/drink container is visibly placed and kept by the cashier in the cashier workspace. Banknotes visibly placed into an unmistakably personal container are also a candidate, without asserting who owns them. Require object continuity, clear cashier spatial role, and clear storage/placement rather than merely passing an object across the scene. Customer property, clothes being worn, ordinary office supplies, medicines, a hand near a pocket, or phone use alone is insufficient. Do not claim theft or ownership of cash."
+    },
+    {
+      "id": "cash_storage_key_unattended",
+      "type": "Ключ от денежного хранилища оставлен без наблюдаемого контроля",
+      "section": "п. 80",
+      "absence": true,
+      "summary": "Внутренний порядок хранения и передачи ключей от устройств хранения наличных должен исключать их несанкционированное использование. Конкретный внутренний порядок по видео не устанавливается.",
+      "visual_test": "A clearly resolved key is used on an identifiable cash-storage safe or drawer and then visibly left in its lock or exposed nearby when the cashier departs and no supervising worker remains visible. Require continuous context establishing that this is the same key and storage device. Reject a vague metallic shape, a customer key, a supervised handover, an occluded key, or another worker supervising the device. A closed safe is not proof it is locked. Describe the observable unattended key as a security-risk indicator requiring human review; do not claim proven unauthorized access or a specific internal-policy breach."
+    },
+    {
+      "id": "leave_active_customer",
+      "type": "Оставление рабочего места во время обслуживания",
+      "section": "п. 22",
+      "absence": false,
+      "summary": "Кассовый работник не покидает рабочее место до окончания обслуживания клиента.",
+      "visual_test": "The cashier visibly walks away from the workstation during a clearly ongoing customer cash transaction. The customer and unfinished exchange remain visible. Reaching, turning, standing up within the workstation, retrieving money from an adjacent drawer, and leaving after completion do not qualify."
+    },
+    {
+      "id": "previous_cash_exposed",
+      "type": "Ранее принятые деньги вне устройства хранения",
+      "section": "п. 20, абзац 2",
+      "absence": false,
+      "summary": "На рабочем месте находятся деньги обслуживаемого клиента; ранее принятые деньги хранятся в специальных закрывающихся на ключ устройствах.",
+      "visual_test": "Cash from a completed prior customer transaction visibly remains exposed on the desk when the next customer's cash is handled. Must establish the prior/current transaction distinction, not merely money on a desk. A closed drawer cannot be judged unlocked from video."
+    },
+    {
+      "id": "deposit_without_count",
+      "type": "Прием наличных без наблюдаемого пересчета",
+      "section": "п. 19 подп. 2; п. 20",
+      "absence": true,
+      "summary": "Прием наличных сопровождается пересчетом в присутствии клиента.",
+      "visual_test": "An entire unobstructed deposit transaction visibly takes loose banknotes directly from customer into storage and finishes without manual or machine counting. Require beginning, transfer, storage and completion; sampling gaps or a counting machine out of view are counterevidence."
+    },
+    {
+      "id": "withdrawal_without_count",
+      "type": "Выдача наличных без наблюдаемого пересчета",
+      "section": "п. 31 подп. 4; исключения п. 32",
+      "absence": true,
+      "summary": "Деньги пересчитываются при клиенте перед выдачей. Неповрежденные пачки и корешки могут выдаваться по сумме на упаковке без полистного пересчета.",
+      "visual_test": "A complete withdrawal sequence shows loose banknotes being prepared and handed over without counting in the customer's presence. Do NOT flag intact sealed bundles or straps, packaged coins, pre-counting in the customer's presence, missing clip beginnings, or obscured machine counting."
+    },
+    {
+      "id": "count_without_customer",
+      "type": "Пересчет принимаемых денег без клиента",
+      "section": "п. 20, абзац 1",
+      "absence": false,
+      "summary": "Принимаемые от клиента деньги пересчитываются в его присутствии.",
+      "visual_test": "A deposit sequence shows a customer handing over loose cash and departing; the cashier starts the initial acceptance count only after that departure. Distinguish a later recount, internal sorting, or a customer still present just outside the crop."
+    },
+    {
+      "id": "bag_without_inspection",
+      "type": "Прием инкассаторской сумки без наблюдаемой проверки",
+      "section": "п. 24 подп. 3–4",
+      "absence": true,
+      "summary": "При приеме инкассаторской сумки кассир проверяет ее целостность и правильность пломбирования.",
+      "visual_test": "A complete clearly visible collection-bag handover proceeds directly to storage with no examination of the bag and its seal. A glance or hand examination may be a check; an ordinary customer handbag is not a collection bag. Reject if the seal or relevant surfaces are hidden."
+    },
+    {
+      "id": "damaged_bag_no_joint_count",
+      "type": "Поврежденная сумка без совместного пересчета",
+      "section": "п. 25",
+      "absence": true,
+      "summary": "При нарушении целостности сумки кассир вскрывает и пересчитывает вложение в присутствии инкассатора.",
+      "visual_test": "A clearly torn collection bag is accepted and the entire sequence ends without opening and recounting in the collector's presence. Damage must be directly visible, not inferred from an ordinary open reusable bag. Collector role and sequence completion must be observable."
+    },
+    {
+      "id": "departure_unlocked_laptop",
+      "type": "Ноутбук оставлен с открытой рабочей сессией",
+      "section": "Проверка рабочего места после ухода",
+      "absence": false,
+      "summary": "После ухода кассира проверяется явно видимая открытая рабочая сессия на его ноутбуке. Светящийся или нечитаемый экран не доказывает отсутствие блокировки.",
+      "visual_test": "Cashier departure followed by clearly resolved desktop/application content on the same unattended laptop. Lock/login screen, off/closed laptop and unreadable content do not qualify.",
+      "pipeline_stage": "departure",
+      "basis_type": "workplace_review_check",
+      "source_note": "Requested workplace-security review criterion; not a verified legal or internal-bank-policy requirement."
+    },
+    {
+      "id": "departure_open_safe",
+      "type": "Открытый денежный сейф после ухода кассира",
+      "section": "Проверка рабочего места после ухода",
+      "absence": false,
+      "summary": "Проверяется видимо открытая дверь идентифицируемого денежного сейфа после ухода кассира при отсутствии видимого надзора другим работником. Закрытая дверь не доказывает запирание.",
+      "visual_test": "Same cash-storage safe visibly remains open after the cashier leaves. An ordinary cabinet, ambiguous storage device or supervising worker does not qualify.",
+      "pipeline_stage": "departure",
+      "basis_type": "workplace_review_check",
+      "source_note": "Requested workplace-security review criterion; not a verified legal or internal-bank-policy requirement."
+    },
+    {
+      "id": "departure_cash_or_bag",
+      "type": "Деньги или сумка с деньгами оставлены на рабочем месте",
+      "section": "Проверка рабочего места после ухода",
+      "absence": false,
+      "summary": "После ухода кассира проверяются оставшиеся вне устройства хранения банкноты либо сумка, связь которой с деньгами установлена по видео. Неопознанная сумка не считается сумкой с деньгами.",
+      "visual_test": "Visible loose banknotes or a positively identified cash bag remains exposed on the workstation after cashier departure. Require cash identity and continuity; reject customer-held cash and unidentified bags.",
+      "pipeline_stage": "departure",
+      "basis_type": "workplace_review_check",
+      "source_note": "Requested workplace-security review criterion; not a verified legal or internal-bank-policy requirement."
+    },
+    {
+      "id": "departure_key_in_lock",
+      "type": "Ключ оставлен в замке денежного хранилища",
+      "section": "Проверка рабочего места после ухода",
+      "absence": false,
+      "summary": "После ухода кассира проверяется явно видимый ключ в замке идентифицированного денежного хранилища. Ручка, блик или неясный металлический предмет не считаются ключом.",
+      "visual_test": "Clearly resolved key physically remains inserted in an identified cash-storage lock after an observed cashier departure, with no visible supervising worker. A closed door alone does not prove locking or key removal. Reject ambiguous handles, reflections and unresolved objects.",
+      "pipeline_stage": "departure",
+      "basis_type": "workplace_review_check",
+      "source_note": "User-requested workplace-security criterion; not a verified legal or internal-bank-policy requirement."
+    },
+    {
+      "id": "customer_cash_no_visible_id",
+      "type": "Передача наличных без наблюдаемого предъявления удостоверения",
+      "section": "Проверка полной видимой клиентской операции",
+      "absence": true,
+      "summary": "В полностью видимой клиентской операции проверяется передача наличных без наблюдаемого предъявления удостоверения. Учитываются цифровые документы, неполный обзор и ранее начатое обслуживание; идентификация в банковской системе по видео не определяется.",
+      "visual_test": "Complete customer arrival-through-completion and unobscured handover area; actual customer-cashier cash transfer; no physical ID presentation at any point and no visible or plausibly obscured digital-ID check. Reject employee-only cash work, partial/ambiguous roles, prior service, unresolved documents and incomplete context. This is a workflow referral, not proof the person was unidentified.",
+      "pipeline_stage": "identity",
+      "basis_type": "workplace_review_check",
+      "source_note": "User-observed workflow review criterion; not an independently verified legal or internal-policy finding."
+    }
+  ],
+  "excluded": [
+    "Системные проводки, сумма сверки, бухгалтерский учет и фактический ущерб не проверяются по видео.",
+    "Отсутствие бумажного удостоверения или квитанции не доказывает нарушение: возможны цифровые документы.",
+    "Полномочия посетителя, должностные обязанности и допуски не устанавливаются по внешности.",
+    "Лица не распознаются и не идентифицируются.",
+    "Открытая дверь, телефон, взгляд в сторону, касание кармана сами по себе не являются достаточным доказательством."
+  ]
+}

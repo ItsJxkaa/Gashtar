@@ -1,0 +1,10 @@
+# Versions read from the tested RTX 5090 model environment, 2026-10-18.
+# Install torch separately from the CUDA 12.8 wheel index.
+transformers==5.20.1
+accelerate==1.12.0
+huggingface-hub==2.2.0
+flash-linear-attention==0.5.2
+triton==3.6.0
+av==16.1.0
+Pillow==11.3.0
+numpy==2.1.3

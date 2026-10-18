@@ -1,0 +1,10 @@
+{
+  "gateway": "Gashtar",
+  "status": "passed",
+  "synthetic_video_only": true,
+  "model": "Qwen/Qwen3.5-9B",
+  "pipeline_version": "2026-10-18.28",
+  "verdict": "no_violation",
+  "unauthenticated_http": 401,
+  "scope": "Local Gashtar gateway to the existing tested GPU deployment; not a Brev Docker test."
+}

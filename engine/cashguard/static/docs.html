@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CashGuard API</title><link rel="stylesheet" href="/static/style.css"></head><body><main><a href="/">← CashGuard</a><h1>Local analysis API</h1><p>Send <code>X-API-Key</code> with every request under <code>/api/v1/</code>.</p><section class="panel"><h2>POST /api/v1/analyze</h2><p>Multipart upload: field <code>file</code>, MOV/MP4/M4V, up to 150 MB. Response 202:</p><pre>{"job_id": "..."}</pre><h2>GET /api/v1/jobs/{job_id}</h2><p>Poll until status is <code>done</code> or <code>failed</code>.</p><pre>{
+  "job_id": "...",
+  "status": "done",
+  "verdict": "violation",
+  "violations": [{
+    "type": "Event type",
+    "timecode_sec": 12.3,
+    "description": "Visible evidence and reason for review",
+    "evidence_frames": [{
+      "timestamp_sec": 12.3,
+      "image_base64": "JPEG bytes encoded as base64"
+    }],
+    "rule": {"section": "Clause", "url": "Official source"}
+  }]
+}</pre><p>A negative result uses <code>no_violation</code> and an empty list. A failed job has an error message and no verdict.</p><h2>GET /api/v1/rules</h2><p>Verified rule catalogue and visual limits.</p><h2>Status codes</h2><p>401: missing or wrong key. 413: file too large. 415: unsupported extension. 422: missing/empty file. 429: GPU busy; retry later. 503: model or key not configured.</p><p><a class="source" href="/openapi.json">Download OpenAPI specification</a></p></section></main></body></html>

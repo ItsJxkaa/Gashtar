@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-18",
+  "corrections": [
+    {
+      "clip_id": 23,
+      "source": "User manual review in conversation",
+      "screen_state": "lock_screen",
+      "accessible_without_code": false,
+      "model_error": "Departure v20 incorrectly flagged an unlocked laptop",
+      "scope": "Human correction, not used as a filename-specific inference exception"
+    },
+    {
+      "clip_id": 38,
+      "source": "User manual annotation in conversation",
+      "intended_violation": "Identification not provided",
+      "rule_mapping": "customer_cash_no_visible_id",
+      "followup": "Two customers hand over money instead of identification; after counting, the cashier leaves the money on the desk, then the second person does the same.",
+      "expected_customer_episodes": 2,
+      "review_constraint": "Distinguish the two customer handovers from employee-only counting or desk handling. Do not create a third ID event from internal cash handling.",
+      "cash_warning_event_match": "User confirms counted cash remains on the desk. This does not by itself validate an unattended-departure event or its timestamp."
+    },
+    {
+      "clip_id": 19,
+      "source": "User review of the private normal-clip ID evidence",
+      "supplied_label": "normal",
+      "user_instruction": "Keep the missing-ID flag; user suspects the dataset label is faulty",
+      "label_status": "disputed; original benchmark label retained",
+      "scope": "Human review note, not a filename-specific inference override or an independently adjudicated replacement label"
+    },
+    {
+      "clip_id": 39,
+      "source": "User review of the private normal-clip ID evidence",
+      "supplied_label": "normal",
+      "user_instruction": "Keep the missing-ID flag; user suspects the dataset label is faulty",
+      "label_status": "disputed; original benchmark label retained",
+      "scope": "Human review note, not a filename-specific inference override or an independently adjudicated replacement label"
+    }
+  ]
+}

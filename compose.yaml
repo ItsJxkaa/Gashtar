@@ -1,0 +1,102 @@
+name: gashtar
+services:
+  model-download:
+    image: gashtar-model:2026-10-18.28
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.model
+    profiles: [setup]
+    environment:
+      HF_HUB_OFFLINE: '0'
+      TRANSFORMERS_OFFLINE: '0'
+    volumes:
+      - weights:/models
+    command: [python, scripts/download_model.py, --model, Qwen/Qwen3.5-9B, --output, /models/qwen35-9b, --revision, c202236235762e1c871ad0ccb60c8ee5ba337b9a]
+
+  model:
+    image: gashtar-model:2026-10-18.28
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.model
+    restart: unless-stopped
+    shm_size: 2gb
+    volumes:
+      - weights:/models:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request,json; assert json.load(urllib.request.urlopen('http://127.0.0.1:8001/health'))['ready']"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10m
+      retries: 4
+
+  analyzer:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.engine
+    network_mode: service:model
+    depends_on:
+      model:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      CASHGUARD_API_KEY: ${CASHGUARD_API_KEY:?Run python3 deploy/init_env.py first}
+      CASHGUARD_DATA_DIR: /runtime
+      CASHGUARD_MODEL_URL: http://127.0.0.1:8001
+      CASHGUARD_MODEL_NAME: Qwen/Qwen3.5-9B
+      CASHGUARD_NATIVE_VIDEO: 'true'
+      CASHGUARD_OVERVIEW_FRAMES: '64'
+      CASHGUARD_COARSE_FRAMES: '24'
+      CASHGUARD_CONFIRMATION_THRESHOLD: '0.75'
+      CASHGUARD_WINDOW_SEC: '24'
+      CASHGUARD_STRIDE_SEC: '20'
+      CASHGUARD_MAX_CANDIDATES: '20'
+      CASHGUARD_DEADLINE_SEC: '270'
+      CASHGUARD_DEPARTURE_CHECKS: 'true'
+      CASHGUARD_WORKFLOW_CONTEXT: 'false'
+      CASHGUARD_SCREEN_RECHECK: 'true'
+      CASHGUARD_STORAGE_DETAIL: 'true'
+      CASHGUARD_IDENTITY_CHECKS: 'true'
+      CASHGUARD_DISABLED_RULE_IDS: '["count_without_customer"]'
+    volumes:
+      - results:/runtime
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request,json; d=json.load(urllib.request.urlopen('http://127.0.0.1:8000/health')); assert d['model_ready'] and d['configured']"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      analyzer:
+        condition: service_healthy
+    environment:
+      CASHGUARD_API_KEY: ${CASHGUARD_API_KEY:?Run python3 deploy/init_env.py first}
+      CASHGUARD_ANALYZER_URL: http://model:8000
+    ports:
+      - 127.0.0.1:8080:8080
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request,json; d=json.load(urllib.request.urlopen('http://127.0.0.1:8080/health')); assert d['model_ready'] and d['configured']"]
+      interval: 15s
+      timeout: 8s
+      retries: 4
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+    command: [tunnel, --no-autoupdate, --protocol, http2, --url, 'http://web:8080']
+
+volumes:
+  weights:
+  results:

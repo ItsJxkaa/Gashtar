@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "url": "https://symptoms-block-resorts-crucial.trycloudflare.com",
+  "gpu": "NVIDIA L40S",
+  "synthetic_video_only": true,
+  "model": "Qwen/Qwen3.5-9B",
+  "pipeline_version": "2026-10-18.28",
+  "verdict": "no_violation",
+  "unauthenticated_http": 401,
+  "elapsed_sec": 36.34,
+  "scope": "Public HTTPS upload through Brev Docker Gashtar gateway, analyzer, GPU model and Cloudflare Tunnel. Not a new accuracy benchmark."
+}

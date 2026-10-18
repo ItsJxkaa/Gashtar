@@ -1,0 +1,4 @@
+# Keep deployment scripts executable by Linux shells after a Windows checkout.
+*.sh text eol=lf
+# Preserve the exact bytes covered by EXPERIMENT_PROVENANCE.json.
+engine/cashguard/** -text

@@ -1,0 +1,518 @@
+{
+  "date": "2026-10-18",
+  "pipeline_version": "2026-10-18.28",
+  "baseline": {
+    "clips": 40,
+    "positives": 21,
+    "negatives": 19,
+    "tp": 8,
+    "detected_positives_with_event_within_2s": 3,
+    "detected_positives_with_event_within_5s": 5,
+    "fn": 13,
+    "tn": 18,
+    "fp": 1,
+    "failed": 0,
+    "precision": 0.8888888888888888,
+    "recall": 0.38095238095238093,
+    "f1": 0.5333333333333333,
+    "latency_median_sec": 19.005,
+    "latency_max_sec": 178.94,
+    "detected_positive_localization_median_sec": 2.63335,
+    "folds": {
+      "0": {
+        "tp": 2,
+        "tn": 3,
+        "fn": 3
+      },
+      "2": {
+        "fn": 2,
+        "tn": 4,
+        "tp": 2
+      },
+      "1": {
+        "fn": 3,
+        "tn": 4,
+        "tp": 1
+      },
+      "3": {
+        "tn": 4,
+        "fn": 3,
+        "tp": 1
+      },
+      "4": {
+        "tn": 3,
+        "tp": 2,
+        "fn": 2,
+        "fp": 1
+      }
+    },
+    "accepted_event_counts_by_clip_label": {
+      "0": {
+        "personal_items": 1,
+        "leave_active_customer": 1
+      },
+      "1": {
+        "cash_before_visible_id_check": 1,
+        "leave_active_customer": 3,
+        "deposit_without_count": 2,
+        "previous_cash_exposed": 1,
+        "personal_items": 2
+      }
+    },
+    "disabled_rule_ids": [
+      "count_without_customer"
+    ]
+  },
+  "new": {
+    "tp": 10,
+    "tn": 16,
+    "fn": 11,
+    "fp": 3,
+    "failed": 0,
+    "n": 40,
+    "positives": 21,
+    "precision": 0.7692307692307693,
+    "recall": 0.47619047619047616,
+    "f1": 0.5882352941176471
+  },
+  "scope": "Fresh full-pipeline evaluation of all 40 previously used unique clips. This is development benchmark comparison, not independent validation.",
+  "promote": true,
+  "promotion_criterion": "Recall improves, F1 does not decrease, zero processing failures and every video completes within 270 seconds. Also remove the human-confirmed lock-screen false alarm on clip 23 without a processing failure. Also reproduce two ID events for the two human-described customer episodes in X38, without a third duplicate.",
+  "development": {
+    "tp": 8,
+    "tn": 13,
+    "fn": 9,
+    "fp": 2,
+    "failed": 0,
+    "n": 32,
+    "positives": 17,
+    "precision": 0.8,
+    "recall": 0.47058823529411764,
+    "f1": 0.5925925925925926
+  },
+  "previously_reserved": {
+    "fn": 2,
+    "tp": 2,
+    "tn": 3,
+    "fp": 1,
+    "failed": 0,
+    "n": 8,
+    "positives": 4,
+    "precision": 0.6666666666666666,
+    "recall": 0.5,
+    "f1": 0.5714285714285714
+  },
+  "gained_positive_clips": 2,
+  "lost_positive_clips": 0,
+  "new_false_positive_clips": 2,
+  "legacy_prediction_changes": 0,
+  "departure_categories": {
+    "departure_cash_or_bag": {
+      "positive_clips": 2
+    }
+  },
+  "departure_state_counts": {
+    "cashier_departed": {
+      "yes": 21
+    },
+    "supervision": {
+      "none_visible": 21
+    },
+    "laptop": {
+      "unlocked_application": 10,
+      "off_or_closed": 9,
+      "lock_screen": 1,
+      "unreadable": 1
+    },
+    "safe": {
+      "ordinary_cabinet": 20,
+      "unknown": 1
+    },
+    "desk_cash": {
+      "no_exposed_cash": 19,
+      "loose_banknotes": 2
+    }
+  },
+  "latency_median_sec": 44.36,
+  "latency_max_sec": 189.08,
+  "detected_positives_with_event_within_5s": 6,
+  "detected_positive_localization_median_sec": 2.733349999999999,
+  "departure_flagged_positive_clips_with_event_within_5s": 0,
+  "departure_flagged_positive_clips": 2,
+  "limitations": [
+    "Binary labels do not identify the actual violation category; a positive clip can contain an incorrectly interpreted event.",
+    "The new checks are user-requested workplace-security review criteria, not independently verified law or bank policy.",
+    "Screen state and cash-bag identity can remain unresolved; missing evidence is not an unsafe state.",
+    "No unseen camera or fresh independently labeled test set was available."
+  ],
+  "software_tests_passed": 117,
+  "screen_recheck": true,
+  "storage_detail": true,
+  "identity_checks": true,
+  "workflow_context_enabled": false,
+  "screen_review_states": {
+    "unknown": 5,
+    "off_or_closed": 2,
+    "lock_screen": 3
+  },
+  "human_reviewed_lock_screen_23": {
+    "laptop_warning_removed": true,
+    "processing_failed": false,
+    "verdict": "no_violation"
+  },
+  "accuracy_promotion": true,
+  "feature_release_eligible": true,
+  "feature_release_criterion": "No loss of clip recall or F1 versus v19, no processing failures, every video within 270 seconds, and human-confirmed locked-screen false alarm on clip 23 removed. This permits an equal-performance feature release, not a claim of improved accuracy.",
+  "human_reviewed_missing_id_38": {
+    "intended_id_event_detected": true,
+    "processing_failed": false,
+    "expected_customer_episodes_from_user": 2,
+    "detected_id_events": 2,
+    "id_event_timecodes": [
+      6.5667,
+      35.5667
+    ]
+  },
+  "identity_flags_by_label": {
+    "0": 2,
+    "1": 3
+  },
+  "disputed_normal_labels": [
+    {
+      "clip_id": 19,
+      "supplied_label": 0,
+      "user_review": "User requested retaining the missing-ID flag and suspects the supplied normal label is faulty; not independently adjudicated.",
+      "id_flag_in_full_run": true
+    },
+    {
+      "clip_id": 39,
+      "supplied_label": 0,
+      "user_review": "User requested retaining the missing-ID flag and suspects the supplied normal label is faulty; not independently adjudicated.",
+      "id_flag_in_full_run": true
+    }
+  ],
+  "original_benchmark_labels_preserved": true,
+  "identity_regression_passed": true,
+  "release_allowed": true,
+  "selected_experiment": "identity-v28",
+  "release_type": "measured_clip_detection_improvement",
+  "selection_rule": "Keep original-resolution screen and storage checks; reject the unrefined laptop warnings and the failed workflow-conditioning experiment. Require no regression versus v19 and successful lock-screen regression. The customer ID omission criterion was tested separately and then included in this fresh full-pipeline rerun.",
+  "intermediate_experiments": {
+    "departure-v20": {
+      "metrics": {
+        "tp": 13,
+        "tn": 16,
+        "fn": 8,
+        "fp": 3,
+        "failed": 0,
+        "n": 40,
+        "positives": 21,
+        "precision": 0.8125,
+        "recall": 0.6190476190476191,
+        "f1": 0.7027027027027027
+      },
+      "status": "Not selected: human review and independent screen inspection rejected the apparent laptop-warning gains."
+    },
+    "workflow-v21": {
+      "pipeline_version": "2026-10-18.21",
+      "status": "stopped_ineligible",
+      "completed": 16,
+      "planned": 40,
+      "metrics_on_completed_clips": {
+        "tp": 2,
+        "tn": 5,
+        "fn": 6,
+        "fp": 1,
+        "failed": 2,
+        "n": 16,
+        "positives": 9,
+        "precision": 0.6666666666666666,
+        "recall": 0.2222222222222222,
+        "f1": 0.3333333333333333
+      },
+      "departure_only_on_same_clips": {
+        "tp": 6,
+        "tn": 6,
+        "fn": 3,
+        "fp": 1
+      },
+      "promote": false,
+      "reason": "Multiple invalid departure timestamps and worse paired detection; fails the predeclared zero-processing-failure release criterion.",
+      "scope": "Early-stopped experiment, not an all-40 result. User-observed workflow references retained; additional model phase-conditioning not selected.",
+      "software_tests_passed": 51
+    },
+    "screen-v23": {
+      "departure-v20": {
+        "metrics": {
+          "tp": 8,
+          "fn": 13,
+          "tn": 18,
+          "fp": 1,
+          "failed": 0,
+          "recall": 0.38095238095238093,
+          "precision": 0.8888888888888888,
+          "f1": 0.5333333333333333
+        },
+        "screen_states": {
+          "unknown": 3,
+          "off_or_closed": 2,
+          "lock_screen": 2
+        },
+        "screens_checked": 7,
+        "screen_false_alarm_23_removed": true
+      }
+    },
+    "departure-v25-controlled-pilot": {
+      "phase": "done",
+      "scope": "Controlled refinement of frozen departure-v20 outputs with original-resolution storage checks and cached screen-v23 decisions; not a fresh full-pipeline run.",
+      "metrics": {
+        "tp": 9,
+        "fn": 12,
+        "tn": 18,
+        "fp": 1,
+        "failed": 0,
+        "recall": 0.42857142857142855,
+        "precision": 0.9,
+        "f1": 0.5806451612903226
+      },
+      "departure_checks_completed": 21,
+      "states": {
+        "safe": {
+          "ordinary_cabinet": 20,
+          "unknown": 1
+        },
+        "door": {
+          "closed": 20,
+          "unknown": 1
+        },
+        "key": {
+          "no": 17,
+          "unknown": 4
+        },
+        "cash": {
+          "no_exposed_cash": 19,
+          "loose_banknotes": 2
+        }
+      },
+      "rule_flags_by_label": {
+        "0": {},
+        "1": {
+          "departure_cash_or_bag": 2
+        }
+      },
+      "software_tests_passed": 74
+    },
+    "departure-v25-full": {
+      "date": "2026-10-18",
+      "pipeline_version": "2026-10-18.25",
+      "baseline": {
+        "clips": 40,
+        "positives": 21,
+        "negatives": 19,
+        "tp": 8,
+        "detected_positives_with_event_within_2s": 3,
+        "detected_positives_with_event_within_5s": 5,
+        "fn": 13,
+        "tn": 18,
+        "fp": 1,
+        "failed": 0,
+        "precision": 0.8888888888888888,
+        "recall": 0.38095238095238093,
+        "f1": 0.5333333333333333,
+        "latency_median_sec": 19.005,
+        "latency_max_sec": 178.94,
+        "detected_positive_localization_median_sec": 2.63335,
+        "folds": {
+          "0": {
+            "tp": 2,
+            "tn": 3,
+            "fn": 3
+          },
+          "2": {
+            "fn": 2,
+            "tn": 4,
+            "tp": 2
+          },
+          "1": {
+            "fn": 3,
+            "tn": 4,
+            "tp": 1
+          },
+          "3": {
+            "tn": 4,
+            "fn": 3,
+            "tp": 1
+          },
+          "4": {
+            "tn": 3,
+            "tp": 2,
+            "fn": 2,
+            "fp": 1
+          }
+        },
+        "accepted_event_counts_by_clip_label": {
+          "0": {
+            "personal_items": 1,
+            "leave_active_customer": 1
+          },
+          "1": {
+            "cash_before_visible_id_check": 1,
+            "leave_active_customer": 3,
+            "deposit_without_count": 2,
+            "previous_cash_exposed": 1,
+            "personal_items": 2
+          }
+        },
+        "disabled_rule_ids": [
+          "count_without_customer"
+        ]
+      },
+      "new": {
+        "tp": 9,
+        "tn": 18,
+        "fn": 12,
+        "fp": 1,
+        "failed": 0,
+        "n": 40,
+        "positives": 21,
+        "precision": 0.9,
+        "recall": 0.42857142857142855,
+        "f1": 0.5806451612903226
+      },
+      "scope": "Fresh full-pipeline evaluation of all 40 previously used unique clips. This is development benchmark comparison, not independent validation.",
+      "promote": true,
+      "promotion_criterion": "Recall improves, F1 does not decrease, zero processing failures and every video completes within 270 seconds. Also remove the human-confirmed lock-screen false alarm on clip 23 without a processing failure.",
+      "development": {
+        "tp": 7,
+        "tn": 15,
+        "fn": 10,
+        "fp": 0,
+        "failed": 0,
+        "n": 32,
+        "positives": 17,
+        "precision": 1.0,
+        "recall": 0.4117647058823529,
+        "f1": 0.5833333333333334
+      },
+      "previously_reserved": {
+        "fn": 2,
+        "tp": 2,
+        "tn": 3,
+        "fp": 1,
+        "failed": 0,
+        "n": 8,
+        "positives": 4,
+        "precision": 0.6666666666666666,
+        "recall": 0.5,
+        "f1": 0.5714285714285714
+      },
+      "gained_positive_clips": 1,
+      "lost_positive_clips": 0,
+      "new_false_positive_clips": 0,
+      "legacy_prediction_changes": 0,
+      "departure_categories": {
+        "departure_cash_or_bag": {
+          "positive_clips": 2
+        }
+      },
+      "departure_state_counts": {
+        "cashier_departed": {
+          "yes": 21
+        },
+        "supervision": {
+          "none_visible": 21
+        },
+        "laptop": {
+          "unlocked_application": 10,
+          "off_or_closed": 9,
+          "lock_screen": 1,
+          "unreadable": 1
+        },
+        "safe": {
+          "ordinary_cabinet": 20,
+          "unknown": 1
+        },
+        "desk_cash": {
+          "no_exposed_cash": 19,
+          "loose_banknotes": 2
+        }
+      },
+      "latency_median_sec": 40.045,
+      "latency_max_sec": 183.57,
+      "detected_positives_with_event_within_5s": 5,
+      "detected_positive_localization_median_sec": 2.9000000000000004,
+      "departure_flagged_positive_clips_with_event_within_5s": 0,
+      "departure_flagged_positive_clips": 2,
+      "limitations": [
+        "Binary labels do not identify the actual violation category; a positive clip can contain an incorrectly interpreted event.",
+        "The new checks are user-requested workplace-security review criteria, not independently verified law or bank policy.",
+        "Screen state and cash-bag identity can remain unresolved; missing evidence is not an unsafe state.",
+        "No unseen camera or fresh independently labeled test set was available."
+      ],
+      "software_tests_passed": 74,
+      "screen_recheck": true,
+      "storage_detail": true,
+      "workflow_context_enabled": false,
+      "screen_review_states": {
+        "unknown": 5,
+        "off_or_closed": 2,
+        "lock_screen": 3
+      },
+      "human_reviewed_lock_screen_23": {
+        "laptop_warning_removed": true,
+        "processing_failed": false,
+        "verdict": "no_violation"
+      },
+      "accuracy_promotion": true,
+      "feature_release_eligible": true,
+      "feature_release_criterion": "No loss of clip recall or F1 versus v19, no processing failures, every video within 270 seconds, and human-confirmed locked-screen false alarm on clip 23 removed. This permits an equal-performance feature release, not a claim of improved accuracy."
+    },
+    "identity-v26-controlled-pilot": {
+      "phase": "done",
+      "completed": 40,
+      "total": 40,
+      "metrics": {
+        "tp": 11,
+        "tn": 14,
+        "fp": 5,
+        "fn": 10,
+        "failed": 0
+      },
+      "scope": "Identity-only experiment combined with frozen v25 outputs. Not a fresh full-pipeline evaluation.",
+      "x38_missing_identification_detected": true
+    },
+    "identity-v27-controlled-pilot": {
+      "phase": "done",
+      "completed": 40,
+      "total": 40,
+      "metrics": {
+        "tp": 10,
+        "tn": 16,
+        "fn": 11,
+        "fp": 3,
+        "failed": 0
+      },
+      "scope": "Grounded identity refinement of v26 ID outputs, combined with frozen v25 full results; not a fresh full-pipeline evaluation.",
+      "x38_missing_identification_detected": true
+    },
+    "identity-v28-controlled-pilot": {
+      "phase": "done",
+      "completed": 40,
+      "total": 40,
+      "metrics": {
+        "tp": 10,
+        "tn": 16,
+        "fn": 11,
+        "fp": 3,
+        "failed": 0
+      },
+      "scope": "Original-resolution document countercheck applied to grounded v27 ID outputs, combined with frozen v25 results; not a fresh full-pipeline evaluation.",
+      "x38_missing_identification_detected": true
+    }
+  },
+  "human_review_limits": {
+    "clip_23": "User confirmed password-protected lock screen; safe for laptop-accessibility criterion.",
+    "clips_19_and_39": "User requested keeping the missing-ID flags and suspects faulty normal labels. Official labels are retained; no independently adjudicated replacement labels are claimed.",
+    "clip_38": "User confirmed two customer cash handovers without ID, with counted cash left on the desk. Employee-only cash handling must not become a third ID event. Cash on the desk alone does not establish an unattended-departure event."
+  }
+}

@@ -1,0 +1,6 @@
+FROM python:3.12-slim
+WORKDIR /app
+COPY engine/ /app/
+RUN pip install --no-cache-dir .
+ENV PYTHONUNBUFFERED=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
+CMD ["python", "-m", "uvicorn", "cashguard.app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--no-access-log"]

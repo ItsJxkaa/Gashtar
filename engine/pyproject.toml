@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cashguard-local"
+version = "0.1.0"
+description = "Local video review service for Datathon 26"
+requires-python = ">=3.10"
+dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "python-multipart>=0.0.20,<1", "httpx>=0.28,<1", "pydantic>=2.9,<3", "pydantic-settings>=2.5,<3", "av>=14,<20", "Pillow>=11,<14", "numpy>=2,<3"]
+
+[project.optional-dependencies]
+research = ["openpyxl>=3.1,<4", "pytest>=8,<10"]
+gpu = ["torch>=2.6,<3", "transformers>=4.57.1,<5", "accelerate>=1.1,<2", "huggingface-hub>=0.34,<1", "bitsandbytes>=0.45,<1"]
+gpu35 = ["torch>=2.6,<3", "transformers==5.20.1", "accelerate>=1.1,<2", "huggingface-hub>=1,<3", "flash-linear-attention==0.5.2"]
+objects = ["torchvision>=0.21,<1"]
+temporal = ["scikit-learn>=1.5,<2"]
+
+[tool.setuptools.package-data]
+cashguard = ["static/*", "rules.json"]
+
+[tool.setuptools.packages.find]
+include = ["cashguard*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

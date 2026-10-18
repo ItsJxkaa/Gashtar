@@ -23,3 +23,13 @@ __pycache__/
 temp_read.pptx
 .DS_Store
 Thumbs.db
+
+# Deployment credentials and generated local state
+.env
+.env.*
+!.env.example
+brev-runtime/
+models/
+runtime/
+.venv*/
+.pytest_cache/
